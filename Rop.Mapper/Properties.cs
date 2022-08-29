@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections;
+using System.Reflection;
 using Rop.Mapper.Attributes;
 
 namespace Rop.Mapper;
@@ -49,5 +50,9 @@ internal class Properties
         if (candidates.Count != 1) return null;
         return candidates[0];
     }
-
+    
+    public IEnumerable<Property> GetAllFrom()
+    {
+        return GetAll().Where(p => p.Attributes.Any(a => a is IMapsFromAttribute));
+    }
 }

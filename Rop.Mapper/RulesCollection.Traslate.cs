@@ -54,7 +54,7 @@ namespace Rop.Mapper
                 }
             }
         }
-
+        
         private void TraslateAtt(MapsIgnoreIfAttribute ia, Property property, Properties dstprop)
         {
             property.Remove(ia);

@@ -184,5 +184,51 @@ namespace Rop.Mapper.Test
 
             return (origin, expected1,expected2);
         }
+        public static (OriginUseMethod origin, DestinyUseMethod expected) MakeUseMethod()
+        {
+            var origin = new OriginUseMethod()
+            {
+                Id = 3,
+                Name = "Pepe",
+                Surname = "Perez",
+                City = "Almeria",
+                PostalCode = "04004",
+                Country = "Spain",
+                Street = "C/ Mediterraneo"
+                
+            };
+            var expected1 = new DestinyUseMethod()
+            {
+                Id = origin.Id,
+                Name = origin.Name,
+                Surname = origin.Surname,
+                Address = new (){City  = origin.City,PostalCode = origin.PostalCode,Street = origin.Street,Country = origin.Country}
+            };
+        
+            return (origin, expected1);
+        }
+        public static (OriginUseSubProp origin, DestinyUseSubProp expected) MakeUseSubProp()
+        {
+            var origin = new OriginUseSubProp()
+            {
+                Id = 3,
+                Name = "Pepe",
+                Surname = "Perez",
+                City = "Almeria",
+                PostalCode = "04004",
+                Country = "Spain",
+                Street = "C/ Mediterraneo"
+
+            };
+            var expected1 = new DestinyUseSubProp()
+            {
+                Id = origin.Id,
+                Name = origin.Name,
+                Surname = origin.Surname,
+                Address = new() { City = origin.City, PostalCode = origin.PostalCode, Street = origin.Street, Country = origin.Country }
+            };
+
+            return (origin, expected1);
+        }
     }
 }

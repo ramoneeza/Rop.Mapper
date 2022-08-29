@@ -86,5 +86,19 @@ namespace Rop.Mapper.Test
             Assert.Equal(expected2.Groups, destiny2.Groups);
 
         }
+        [Fact]
+        public void TestUseMethod()
+        {
+            var (origin, expected) = MakeClasses.MakeUseMethod();
+            var destiny = origin.MapTo<DestinyUseMethod>();
+            Assert.Equal(expected, destiny);
+        }
+        [Fact]
+        public void TestUseSubProp()
+        {
+            var (origin, expected) = MakeClasses.MakeUseSubProp();
+            var destiny = origin.MapTo<DestinyUseSubProp>();
+            Assert.Equal(expected, destiny);
+        }
     }
 }

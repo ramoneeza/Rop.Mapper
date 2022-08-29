@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Runtime.InteropServices.ComTypes;
 using Rop.Mapper.Attributes;
 using Rop.Mapper.Rules;
 
@@ -22,6 +23,11 @@ internal partial class RulesCollection
             var propertyrule = FactoryRule(property,dstprop);
             _rules.Add(propertyrule);
         }
+        foreach (var property in dstprop.GetAllFrom())
+        {
+            var propertyrule =FactoryRuleDst(property, srcprop);
+            if (propertyrule!=null) _rules.Add(propertyrule);
+        }
     }
 
     private void TraslateAttributes(Properties srcprop, Properties dstprop)
@@ -36,14 +42,40 @@ internal partial class RulesCollection
         if (prop.HasAtt<MapsIgnoreAttribute>(out _)) return Rule.Ignore(prop);
         if (prop.HasAtt<MapsToAttribute>(out var mapstoatt))
         {
-            var dstprop = dstprops.Get(mapstoatt!.Name);
-            if (dstprop is null) return Rule.Error($"Destiny has not {mapstoatt!.Name} property");
-            return Rule.RuleStd(prop, dstprop);
+            var name = mapstoatt!.Name;
+            if (!name.Contains('.'))
+            {
+
+                var dstprop = dstprops.Get(name);
+                if (dstprop is null) return Rule.Error($"Destiny has not {name} property");
+                return Rule.RuleStd(prop, dstprop);
+            }
+            else
+            {
+                var p = name.IndexOf('.');
+                var prefix = name[0..p];
+                var sufix = name[(p + 1)..];
+                var dstprefix = dstprops.Get(prefix);
+                if (dstprefix is null) return Rule.Error($"Destiny has not {prefix} prefix property");
+                var propsdstsufix = Mapper.GetPropertiesDst(dstprefix.PropertyType.Type);
+                if (propsdstsufix is null) return Rule.Error($"Destiny with unknown {prefix} prefix type");
+                var dstpropsub = propsdstsufix.Get(sufix);
+                if (dstpropsub is null) return Rule.Error($"Destiny with unknown {prefix}.{sufix} sub property");
+                return Rule.RuleSubProperty(prop, dstprefix,dstpropsub);
+            }
         }
         // Default Name to Name
         var dstpropfinal = dstprops.Get(prop.PropertyName);
         if (dstpropfinal is null) return Rule.Error($"Destiny has not {prop.PropertyName} property");
         return Rule.RuleStd(prop, dstpropfinal);
+    }
+    private IRule? FactoryRuleDst(Property prop, Properties srcprops)
+    {
+        if (prop.HasAtt<MapsUseMethodAttribute>(out var useatt) && useatt.Src == srcprops.ClassType)
+            return Rule.FactoryUseMethod(prop,DstType, useatt, srcprops);
+        else
+            return null;
+
     }
     public bool Verify()
     {

@@ -22,19 +22,38 @@ namespace Rop.Mapper
             Map(item,destiny);
             return destiny;
         }
-        public void Map<Dst>(object item,Dst destiny) where Dst:class
+        private void Map<Dst>(object item,ref Dst destiny)
         {
-            var rules = getMapperRules(item.GetType(),destiny.GetType());
+            var rules = getMapperRules(item.GetType(),destiny!.GetType());
             foreach (var rule in rules.GetAll())
             {
                 rule.Apply(this,item, destiny);
             }
         }
+
+        public void Map<Dst>(object item,Dst destiny) where Dst:class
+        {
+            Map(item, ref destiny);
+        }
+        public Dst Map<Dst>(object item,Func<Dst> factorydestiny)
+        {
+            var destiny = factorydestiny();
+            Map(item,ref destiny);
+            return destiny;
+        }
+
         public IEnumerable<Dst> MapEnumerable<Dst>(IEnumerable items) where Dst : class, new()
         {
             foreach (var item in items)
             {
                 yield return Map<Dst>(item);
+            }
+        }
+        public IEnumerable<Dst> MapEnumerable<Dst>(IEnumerable items,Func<Dst> constructor)
+        {
+            foreach (var item in items)
+            {
+                yield return Map<Dst>(item,constructor);
             }
         }
         
@@ -117,15 +136,7 @@ namespace Rop.Mapper
             return rules.Verify();
         }
 
-        public IEnumerable<Dst> MapEnumerable<Dst>(IEnumerable items, Func<Dst> constructor) where Dst : class
-        {
-            foreach (var item in items)
-            {
-                var dst = constructor();
-                Map<Dst>(item,dst);
-                yield return dst;
-            }
-        }
+        
         
     }
 }

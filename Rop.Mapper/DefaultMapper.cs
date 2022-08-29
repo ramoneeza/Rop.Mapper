@@ -10,6 +10,7 @@ public static class DefaultMapper
     private static readonly Mapper _defaultmapper;
     public static Dst MapTo<Dst>(this IMappeable item) where Dst : class, new() => _defaultmapper.Map<Dst>(item);
     public static void MapTo<Dst>(this IMappeable item, Dst destiny) where Dst : class => _defaultmapper.Map(item, destiny);
+    public static Dst MapTo<Dst>(this IMappeable item,Func<Dst> factorydestiny) => _defaultmapper.Map(item, factorydestiny);
 
     public static IEnumerable<Dst> MapEnumerable<Dst>(this IEnumerable<IMappeable> item) where Dst : class, new() => _defaultmapper.MapEnumerable<Dst>(item);
     public static IEnumerable<Dst> MapEnumerable<Dst>(this IEnumerable<IMappeable> item,Func<Dst> constructor) where Dst : class, new() => _defaultmapper.MapEnumerable<Dst>(item,constructor);
