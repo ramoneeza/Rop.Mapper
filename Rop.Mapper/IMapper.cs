@@ -10,6 +10,6 @@ public interface IMapper
     IEnumerable<Dst> MapEnumerable<Dst>(IEnumerable items) where Dst : class, new();
     IConverter? GetConverter(string convertername);
     IConverter? GetConverter(Type src,Type dst);
-    void RegisterConverter(IConverter converter, bool force=false);
-    void RegisterConverter(Type src,Type dst, IConverter converter, bool force=false);
+    void RegisterConverter<C>(bool force=false) where C:IConverter,new();
+    void RegisterConverter<C>(Type src, Type dst, bool force = false) where C : IConverter,new();
 }

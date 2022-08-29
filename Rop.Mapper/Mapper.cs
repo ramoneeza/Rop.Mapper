@@ -73,8 +73,9 @@ namespace Rop.Mapper
             return GetConverter(key);
         }
 
-        public void RegisterConverter(IConverter converter, bool force=false)
+        public void RegisterConverter<C>(bool force = false) where C : IConverter, new()
         {
+            var converter = new C();
             RegisterConverter(converter.Name,converter,force);
         }
         private void RegisterConverter(string name,IConverter converter, bool force = false)
@@ -82,9 +83,11 @@ namespace Rop.Mapper
             if (_convertersdic.ContainsKey(name) && !force) return;
             _convertersdic[name] = converter;
         }
-        public void RegisterConverter(Type src,Type dst, IConverter converter, bool force=false)
+
+        public void RegisterConverter<C>(Type src, Type dst, bool force = false) where C : IConverter, new()
         {
             var key = $"{src.Name}|{dst.Name}";
+            var converter = new C();
             RegisterConverter(key,converter,force);
         }
 
