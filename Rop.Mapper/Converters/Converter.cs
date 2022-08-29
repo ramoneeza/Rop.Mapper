@@ -8,20 +8,27 @@ using Rop.Mapper.Rules;
 
 namespace Rop.Mapper.Converters
 {
-    public abstract class AbsConverter<Src,Dst>:IConverter<Src,Dst>,IConverter
+    public abstract class AbsConverter<A,B>:IConverter<A,B>
     {
-        public abstract string Name { get; }
+        public Type AType { get; }
+        public Type BType { get; }
+        public virtual string Name { get; }
         object? IConverter.Convert(object? value, TypeProxy typesrc, TypeProxy typedst)
         {
-            if (typesrc.Type != typeof(Src) || typedst.Type != typeof(Dst)) throw new Exception("Bad Conversor");
-            return Convert((Src) value!);
+            if (typesrc.Type != AType || typedst.Type != BType) throw new Exception("Bad Conversor");
+            return Convert((A) value!);
         }
-        public abstract Dst? Convert(Src? value);
-        
+        public abstract B? Convert(A? value);
+
+        protected AbsConverter(Type? typeSrc=null, Type? typeDst=null,string? name=null)
+        {
+            this.AType = typeSrc??typeof(A);
+            this.BType = typeDst??typeof(B);
+            Name = name??this.GetType().Name;
+        }
     }
-    public abstract class AbsSimetricConverter<A,B> : IConverterSym<A,B>,IConverter
+    public abstract class AbsSimetricConverter<A,B> :AbsConverter<A,B>,IConverterSymmetric<A,B>
     {
-        public abstract string Name { get; }
         object? IConverter.Convert(object? value, TypeProxy typesrc, TypeProxy typedst)
         {
             if (typesrc.Type==typeof(A)&&typedst.Type==typeof(B)) return Convert((A)value!);
@@ -29,13 +36,14 @@ namespace Rop.Mapper.Converters
             throw new Exception("Bad Conversor");
         }
         public abstract A? Convert(B? value);
-        public abstract B? Convert(A? value);
+        protected AbsSimetricConverter(Type? typeSrc=null, Type? typeDst=null, string? name=null) : base(typeSrc, typeDst, name)
+        {
+        }
     }
 
 
     public class DateOnlyConverter:AbsSimetricConverter<DateTime,DateOnly>
     {
-        public override string Name => "DateConversor";
         public override DateTime Convert(DateOnly value)
         {
             return value.ToDateTime(new TimeOnly(0));
@@ -47,7 +55,6 @@ namespace Rop.Mapper.Converters
     }
     public class TimeOnlyConverter : AbsSimetricConverter<TimeSpan, TimeOnly>
     {
-        public override string Name => "TimeConversor";
         public override TimeSpan Convert(TimeOnly value)
         {
             return value.ToTimeSpan();
@@ -60,7 +67,6 @@ namespace Rop.Mapper.Converters
 
     public class DateTimeToTimeConverter : AbsConverter<DateTime, TimeOnly>
     {
-        public override string Name => "DateTimeToTime";
         public override TimeOnly Convert(DateTime value)
         {
             return TimeOnly.FromDateTime(value);

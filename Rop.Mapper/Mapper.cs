@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -69,26 +70,39 @@ namespace Rop.Mapper
         public IConverter? GetConverter(Type src,Type dst)
         {
             if (src == dst) return null;
-            var key = $"{src.Name}|{dst.Name}";
+            var key =IConverter.TypeKey(src,dst);
             return GetConverter(key);
         }
 
-        public void RegisterConverter<C>(bool force = false) where C : IConverter, new()
+        public void RegisterConverterByName<C>(bool alsobytype = false, bool force = false) where C : IConverter, new()
         {
             var converter = new C();
             RegisterConverter(converter.Name,converter,force);
+            if (alsobytype)
+            {
+                RegisterConverter(converter.TypeKey(), converter, force);
+                if (converter is IConverterSymmetric cs)
+                {
+                    RegisterConverter(cs.InvTypeKey(), converter, force);
+                }
+            }
+        }
+
+        public void RegisterConverterByType<C>(bool alsobyname = false, bool force = false) where C : IConverter, new()
+        {
+            var converter = new C();
+            RegisterConverter(converter.TypeKey(), converter, force);
+            if (converter is IConverterSymmetric cs)
+            {
+                RegisterConverter(cs.InvTypeKey(), converter, force);
+            }
+            if (alsobyname)
+                RegisterConverter(converter.Name,converter,force);
         }
         private void RegisterConverter(string name,IConverter converter, bool force = false)
         {
             if (_convertersdic.ContainsKey(name) && !force) return;
             _convertersdic[name] = converter;
-        }
-
-        public void RegisterConverter<C>(Type src, Type dst, bool force = false) where C : IConverter, new()
-        {
-            var key = $"{src.Name}|{dst.Name}";
-            var converter = new C();
-            RegisterConverter(key,converter,force);
         }
 
         public Mapper()
@@ -102,7 +116,16 @@ namespace Rop.Mapper
             var rules = getMapperRules(src, dst);
             return rules.Verify();
         }
-       
 
+        public IEnumerable<Dst> MapEnumerable<Dst>(IEnumerable items, Func<Dst> constructor) where Dst : class
+        {
+            foreach (var item in items)
+            {
+                var dst = constructor();
+                Map<Dst>(item,dst);
+                yield return dst;
+            }
+        }
+        
     }
 }
