@@ -135,7 +135,17 @@ namespace Rop.Mapper
             var rules = getMapperRules(src, dst);
             return rules.Verify();
         }
+        public static bool Verify<Src,Dst>(bool reverse = false)
+        {
+            if (!Verify(typeof(Src),typeof(Dst))) return false;
+            if (reverse && !Verify(typeof(Dst),typeof(Src))) return false;
+            return true;
+        }
 
+        public static void VerifyThrow<Src, Dst>(bool reverse = false)
+        {
+            if (!Verify<Src, Dst>(reverse)) throw new Exception($"Mapper failed for verifying {typeof(Src)}{(reverse?"<-->":"--->")}{typeof(Dst)}");
+        }
         
         
     }
