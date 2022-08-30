@@ -11,9 +11,9 @@ namespace Rop.Mapper.Rules
     {
         internal static RuleError Error(string error) => new RuleError(error);
         internal static RuleIgnore Ignore(Property psrc) => new RuleIgnore(psrc);
-        internal static IRule RuleStd(Property psrc, Property pdst) => Rop.Mapper.Rules.RuleStd.Factory(psrc,pdst);
-        internal static IRule RuleSubProperty(Property psrc, Property pdst,Property psub) => Rop.Mapper.Rules.RuleSubProperty.Factory(psrc, pdst,psub);
-        internal static IRule FactoryUseMethod(Property prop,Type dst, MapsUseMethodAttribute useatt, Properties scrprops)
+        internal static IRule RuleStd(Property psrc, Property pdst,string? conversor) => Rop.Mapper.Rules.RuleStd.Factory(psrc,pdst,conversor);
+        internal static IRule RuleSubProperty(Property psrc, Property pdst,Property psub,string? converter=null) => Rop.Mapper.Rules.RuleSubProperty.Factory(psrc, pdst,psub,converter);
+        internal static IRule FactoryUseMethod(Property prop,Type dst, MapsFromUseMethodAttribute useatt, Properties scrprops)
         {
             return RuleUseMethod.Factory(scrprops.ClassType,dst, prop, useatt);
         }

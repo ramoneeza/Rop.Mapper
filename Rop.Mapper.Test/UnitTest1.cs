@@ -100,5 +100,14 @@ namespace Rop.Mapper.Test
             var destiny = origin.MapTo<DestinyUseSubProp>();
             Assert.Equal(expected, destiny);
         }
+        [Fact]
+        public void TestUseExtra()
+        {
+            var (origin, expected) = MakeClasses.MakeUseExtra();
+            var destiny = origin.MapTo<DestinyUseExtra>();
+            Assert.Equal(expected, destiny);
+            var reverse=DefaultMapper.Map<OriginUseExtra>(expected);
+            Assert.Equal(origin,reverse);
+        }
     }
 }

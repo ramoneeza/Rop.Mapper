@@ -28,7 +28,7 @@ namespace Rop.Mapper.Test.Model
         public int Id { get; init; }
         public string Name { get; init; }
         public string Surname { get; init; }
-        [MapsUseMethod(typeof(OriginUseMethod),nameof(_MakeAddress))]
+        [MapsFromUseMethod(typeof(OriginUseMethod),nameof(_MakeAddress))]
         public Address Address { get; set; }
 
         private void _MakeAddress(OriginUseMethod source)

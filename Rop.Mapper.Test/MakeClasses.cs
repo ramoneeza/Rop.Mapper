@@ -25,7 +25,7 @@ namespace Rop.Mapper.Test
                 Name = origin.Name,
                 Surname = origin.Surname,
                 UpdateDate = origin.UpdateDate,
-                BirthDate = DateOnly.FromDateTime(origin.BirthDate)
+                BirthDate =DateOnly.FromDateTime(origin.BirthDate)
             };
             return (origin, expected);
         }
@@ -230,5 +230,29 @@ namespace Rop.Mapper.Test
 
             return (origin, expected1);
         }
+        public static (OriginUseExtra origin, DestinyUseExtra expected) MakeUseExtra()
+        {
+            DefaultMapper.RegistryConverterByName<DtToDateOnlyDt>(false,true);
+            DefaultMapper.RegistryConverterByName<DtToTimeOnly>(false,true);
+            var dt = DateTime.Now;
+            var origin = new OriginUseExtra()
+            {
+                Id = 3,
+                Name = "Pepe",
+                Surname = "Perez",
+                EnterDate = dt.Date,
+                EnterTime = dt.TimeOfDay
+            };
+            var expected1 = new DestinyUseExtra()
+            {
+                Id = origin.Id,
+                Name = origin.Name,
+                Surname = origin.Surname,
+                EnterDateTime    = dt
+            };
+
+            return (origin, expected1);
+        }
     }
+    
 }

@@ -44,4 +44,14 @@ public static class DefaultMapper
         AddDefaultConverter<DateTimeToTimeConverter>();
         _defaultmapper = new Mapper();
     }
+
+    public static void RegistryConverterByName<T>(bool alsobytype=false,bool force=false) where T:IConverter,new()
+    {
+        _defaultmapper.RegisterConverterByName<T>(alsobytype,force);
+    }
+    public static void RegistryConverterByType<T>(bool alsobyname=false,bool force=false) where T:IConverter,new()
+    {
+        _defaultmapper.RegisterConverterByType<T>(alsobyname,force);
+    }
+
 }

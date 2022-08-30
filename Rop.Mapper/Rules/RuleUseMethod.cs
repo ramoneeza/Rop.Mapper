@@ -17,7 +17,7 @@ public class RuleUseMethod : IRule
         Method = method;
         MapperParameter = mpar;
     }
-    public static IRule Factory(Type src,Type dst, Property pDst,MapsUseMethodAttribute usematt)
+    public static IRule Factory(Type src,Type dst, Property pDst,MapsFromUseMethodAttribute usematt)
     {
         if (usematt.Src!=src) return new RuleError("Error by Bad Source Type");
         var methodtype = dst.GetMethod(usematt.Method, BindingFlags.Instance | BindingFlags.NonPublic);

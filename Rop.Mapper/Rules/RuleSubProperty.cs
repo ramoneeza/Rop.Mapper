@@ -8,23 +8,30 @@ public class RuleSubProperty : IRule
     internal Property PDst { get;}
     internal Property PDstSub { get; }
 
-    private MapsConversorAttribute? ConverterAtt { get; }
+    private string? Converter { get; }
     
-    private RuleSubProperty(Property pSrc, Property pDst,Property pDstSub)
+    private RuleSubProperty(Property pSrc, Property pDst,Property pDstSub, string? converter = null)
     {
         PSrc = pSrc;
         PDst = pDst;
         PDstSub = pDstSub;
-        var converteratt = PSrc.FindAtt<MapsConversorAttribute>();
-        if (converteratt == null) converteratt = PDstSub.FindAtt<MapsConversorAttribute>();
-        ConverterAtt = converteratt;
+        if (converter == null)
+        {
+            var converteratt = PSrc.FindAtt<MapsConversorAttribute>();
+            if (converteratt == null) converteratt = PDstSub.FindAtt<MapsConversorAttribute>();
+            Converter = converteratt?.Conversor;
+        }
+        else
+        {
+            Converter = converter;
+        }
     }
 
-    public static IRule Factory(Property pSrc, Property pDst,Property pDstSub)
+    public static IRule Factory(Property pSrc, Property pDst,Property pDstSub,string? converter=null)
     {
         if (pDst.PropertyType.TypeCode!=TypeCode.Object)
             return new RuleError("Only object type for subproperties");
-        var rulestd = new RuleSubProperty(pSrc, pDst,pDstSub);
+        var rulestd = new RuleSubProperty(pSrc, pDst,pDstSub,converter);
         if (rulestd.HasErrorAttr())
             return new RuleError("Error by Bad Attribute");
         else
@@ -52,7 +59,7 @@ public class RuleSubProperty : IRule
     {
         var typesrc = PSrc.PropertyType;
         var typedst=PDstSub.PropertyType;
-        var converter = (ConverterAtt is not null) ? mapper.GetConverter(ConverterAtt.Conversor) : mapper.GetConverter(typesrc.Type,typedst.Type);
+        var converter = (Converter is not null) ? mapper.GetConverter(Converter) : mapper.GetConverter(typesrc.Type,typedst.Type);
         return ConversionEngine.ConvertValue(valuesrc, typesrc, typedst,converter);
     }
 }

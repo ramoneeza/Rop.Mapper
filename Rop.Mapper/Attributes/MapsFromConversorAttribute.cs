@@ -5,8 +5,8 @@
 public class MapsFromConversorAttribute : Attribute,IMapsFromAttribute
 {
     public string Conversor { get; }
-    public Type? Src { get; }
-    public MapsFromConversorAttribute(string conversor, Type? src)
+    public Type Src { get; }
+    public MapsFromConversorAttribute(string conversor,Type src)
     {
         Conversor = conversor;
         Src = src;

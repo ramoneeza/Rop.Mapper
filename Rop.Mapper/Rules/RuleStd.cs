@@ -8,20 +8,26 @@ public class RuleStd : IRule
 {
     internal Property PSrc { get; }
     internal Property PDst { get;}
-    private MapsConversorAttribute? ConverterAtt { get; }
-    
-    private RuleStd(Property pSrc, Property pDst)
+    private string? Conversor { get; }
+
+    private RuleStd(Property pSrc, Property pDst, string? conversor = null)
     {
         PSrc = pSrc;
         PDst = pDst;
-        var converteratt = PSrc.FindAtt<MapsConversorAttribute>();
-        if (converteratt == null) converteratt = PDst.FindAtt<MapsConversorAttribute>();
-        ConverterAtt = converteratt;
+        if (conversor is null){
+            var converteratt = PSrc.FindAtt<MapsConversorAttribute>();
+            if (converteratt == null) converteratt = PDst.FindAtt<MapsConversorAttribute>();
+            Conversor = converteratt?.Conversor;
+        }
+        else
+        {
+            Conversor = conversor;
+        }
     }
 
-    public static IRule Factory(Property pSrc, Property pDst)
+    public static IRule Factory(Property pSrc, Property pDst,string? conversor)
     {
-        var rulestd = new RuleStd(pSrc, pDst);
+        var rulestd = new RuleStd(pSrc, pDst,conversor);
         if (rulestd.HasErrorAttr())
             return new RuleError("Error by Bad Attribute");
         else
@@ -43,7 +49,7 @@ public class RuleStd : IRule
     {
         var typesrc = PSrc.PropertyType;
         var typedst=PDst.PropertyType;
-        var converter = (ConverterAtt is not null) ? mapper.GetConverter(ConverterAtt.Conversor) : mapper.GetConverter(typesrc.Type,typedst.Type);
+        var converter = (Conversor is not null) ? mapper.GetConverter(Conversor) : mapper.GetConverter(typesrc.Type,typedst.Type);
         return ConversionEngine.ConvertValue(valuesrc, typesrc, typedst,converter);
     }
 }

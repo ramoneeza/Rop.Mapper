@@ -66,7 +66,7 @@ namespace Rop.Mapper
         {
             property.Remove(ia);
             RemoveAtt<MapsToAttribute>(property);
-            property.Add(new MapsToAttribute(ia.Name));
+            property.Add(new MapsToExtraAttribute(ia.Name,ia.Conversor));
         }
         private void TraslateAtt(MapsConversorIfAttribute ia, Property property, Properties dstprop)
         {
@@ -93,7 +93,7 @@ namespace Rop.Mapper
                 return;
             }
             RemoveAtt<MapsToAttribute>(fromprop);
-            fromprop.Add(new MapsToAttribute(property.PropertyName));
+            fromprop.Add(new MapsToExtraAttribute(property.PropertyName,ia.Conversor));
         }
 
         private void TraslateAtt(MapsFromConversorAttribute ia, Property property, Properties srcprop)
