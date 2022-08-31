@@ -281,6 +281,36 @@ namespace Rop.Mapper.Test
             };
             return (origin, expected1);
         }
+        public static (OriginStringToListSeparator origin, DestinyStringToListSeparator expected1,DestinyStringToArraySeparator expected2) MakeUseStringToListSeparator()
+        {
+            var origin = new OriginStringToListSeparator()
+            {
+                Id = 3,
+                Name = "Pepe",
+                Surname = "Perez",
+                UpdateDate = new DateTime(2022, 1, 4),
+                Groups = "Hello&GoodBye&Sorry",
+            };
+            var expected1 = new DestinyStringToListSeparator()
+            {
+                Id = origin.Id,
+                Name = origin.Name,
+                Surname = origin.Surname,
+                UpdateDate = origin.UpdateDate,
+                Groups    = origin.Groups.Split('&').ToList()
+            };
+            var expected2 = new DestinyStringToArraySeparator()
+            {
+                Id = origin.Id,
+                Name = origin.Name,
+                Surname = origin.Surname,
+                UpdateDate = origin.UpdateDate,
+                Groups = origin.Groups.Split('&')
+
+            };
+
+            return (origin, expected1,expected2);
+        }
     }
     
 }

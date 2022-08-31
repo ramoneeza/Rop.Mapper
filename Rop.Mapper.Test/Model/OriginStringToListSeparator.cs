@@ -7,17 +7,16 @@ using Rop.Mapper.Attributes;
 
 namespace Rop.Mapper.Test.Model
 {
-    public class OriginStringToListSeparator:IMappeable
+    public class OriginStringToList:IMappeable
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public DateTime UpdateDate { get; set; }
-        [MapsSeparator("&")]
         public string Groups { get; set; }
     }
 
-    public record DestinyStringToListSeparator
+    public record DestinyStringToList
     {
         public int Id { get; init; }
         public string Name { get; init; }
@@ -25,7 +24,7 @@ namespace Rop.Mapper.Test.Model
         public DateTime UpdateDate { get; init; }
         public List<string> Groups { get; init; }
     }
-    public record DestinyStringToArraySeparator
+    public record DestinyStringToArray
     {
         public int Id { get; init; }
         public string Name { get; init; }

@@ -120,5 +120,14 @@ namespace Rop.Mapper.Test
             var reverse=DefaultMapper.Map<OriginComplex>(expected);
             Assert.True(origin.Access.SequenceEqual(reverse.Access));
         }
+        [Fact]
+        public void TestStringToListSeparator()
+        {
+            var (origin, expected1,expected2) = MakeClasses.MakeUseStringToListSeparator();
+            var destiny1 = origin.MapTo<DestinyStringToListSeparator>();
+            var destiny2 = origin.MapTo<DestinyStringToArraySeparator>();
+            Assert.Equal(expected1.Groups, destiny1.Groups);
+            Assert.Equal(expected2.Groups, destiny2.Groups);
+        }
     }
 }
