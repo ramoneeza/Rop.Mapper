@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq.Expressions;
+using System.Reflection;
 using Rop.Mapper.Attributes;
 
 namespace Rop.Mapper.Rules;
@@ -55,16 +56,32 @@ public class RuleUseMethod : IRule
         return rulestd;
     }
 
+    private Action<object,IMapper, object?>? _compiled;
 
+    private void _compile(Mapper mapper, object src, object dst)
+    {
+        var par0 = Expression.Parameter(typeof(object), "dst");
+        var par1 = Expression.Parameter(typeof(IMapper), "mapper");
+        var par2 = Expression.Parameter(typeof(object), "src");
+        var dstcast=Expression.Convert(par0, dst.GetType());
+        var tcast = Method.GetParameters()[(MapperParameter) ? 1 : 0];
+        var cast2 = Expression.Convert(par2, tcast.ParameterType);
+        var minv = (MapperParameter) ? Expression.Call(dstcast, Method, par1,cast2) : Expression.Call(dstcast,Method, cast2);
+        var lambda = Expression.Lambda(minv,par0, par1, par2);
+        _compiled =(Action<object,IMapper,object?>)lambda.Compile();
+    }
     public virtual void Apply(Mapper mapper, object src, object dst)
     {
-        if (MapperParameter)
-        {
-            Method.Invoke(dst, new object[]{mapper, src});
-        }
-        else
-        {
-            Method.Invoke(dst, new object[] { src });
-        }
+        if (_compiled is null) _compile(mapper,src,dst);
+        _compiled!(dst,mapper, src);
+        
+        //if (MapperParameter)
+        //{
+        //    Method.Invoke(dst, new object[]{mapper, src});
+        //}
+        //else
+        //{
+        //    Method.Invoke(dst, new object[] { src });
+        //}
     }
 }

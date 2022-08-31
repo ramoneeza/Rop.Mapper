@@ -42,6 +42,7 @@ public static class DefaultMapper
         AddDefaultConverter<DateOnlyConverter>();
         AddDefaultConverter<TimeOnlyConverter>();
         AddDefaultConverter<DateTimeToTimeConverter>();
+        AddDefaultConverter<BitArrayConverter>();
         _defaultmapper = new Mapper();
     }
 

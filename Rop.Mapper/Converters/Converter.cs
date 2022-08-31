@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -72,4 +73,35 @@ namespace Rop.Mapper.Converters
             return TimeOnly.FromDateTime(value);
         }
     }
+
+    public class BitArrayConverter:AbsSimetricConverter<byte[],BitArray>
+    {
+        public static BitArray ToBitArray(byte[]? value)=>new BitArray(value??new byte[]{});
+        public static byte[] ToBytes(BitArray? value)
+        {
+            if (value is null || value.Length == 0) return new byte[] { };
+            var bytes = new byte[(value.Length - 1) / 8 + 1];
+            value.CopyTo(bytes, 0);
+            return bytes;
+        }
+
+        public static bool Equal(BitArray a, BitArray b)
+        {
+            if (a.Length!=b.Length) return false;
+            if (a.Length == 0) return true;
+            var aa = ToBytes(a);
+            var bb = ToBytes(b);
+            return aa.SequenceEqual(bb);
+        }
+        public static bool Equal(byte[] a,byte[] b)
+        {
+            if (a.Length!=b.Length) return false;
+            if (a.Length == 0) return true;
+            return a.SequenceEqual(b);
+        }
+
+        public override BitArray? Convert(byte[]? value) => ToBitArray(value);
+        public override byte[]? Convert(BitArray? value) => ToBytes(value);
+    }
+
 }

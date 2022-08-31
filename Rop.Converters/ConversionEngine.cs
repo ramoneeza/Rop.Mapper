@@ -1,44 +1,108 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Concurrent;
 using System.Globalization;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using Rop.Mapper.Rules;
 
-namespace Rop.Mapper
+namespace Rop.Converters
 {
-    public static class ConversionEngine
+    
+
+
+
+    public class ConversionEngine
     {
-        public static object? ConvertValue(object? valuesrc, TypeProxy typesrc, TypeProxy typedst, IConverter? desireconverter)
+#region explicit converters
+        private readonly ConcurrentDictionary<string, IConverter> _converterdicbyname = new ConcurrentDictionary<string, IConverter>(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, IConverter> _converterdicbytype = new ConcurrentDictionary<string, IConverter>(StringComparer.OrdinalIgnoreCase);
+
+        public void RegisterConverterByName(IConverter converter, bool force = false, bool includetypes = false)
+        {
+            if (_converterdicbyname.ContainsKey(converter.Name) && !force) return;
+            _converterdicbyname[converter.Name] = converter;
+            if (includetypes)
+                RegisterConverterByTypes(converter, force, false);
+        }
+        public void RegisterConverterByTypes(IConverter converter, bool force = false, bool includename = false)
+        {
+            if (_converterdicbytype.ContainsKey(converter.Key) && !force) return;
+            switch (converter)
+            {
+                case IConverterSymmetric cs:
+                    var ab = cs.ConverterBA;
+                    var ba = cs.ConverterBA;
+                    _converterdicbytype[ab.Key] = ab;
+                    _converterdicbytype[ba.Key] = ba;
+                    break;
+                default:
+                    _converterdicbytype[converter.Key] = converter;
+                    break;
+            }
+            if (includename) RegisterConverterByName(converter, force, false);
+        }
+        #endregion
+        private static object? GetDefaultValue(Type t)
+        {
+            if (t.IsValueType && Nullable.GetUnderlyingType(t) == null)
+                return Activator.CreateInstance(t);
+            else
+                return null;
+        }
+
+        public A DirectConvertValue<A>(A valuesrc, IConverter<A,A> desiredconverter = null)
+        {
+            if (desiredconverter is not null) return desiredconverter.Convert(valuesrc);
+            return valuesrc;
+        }
+        public A DirectConvertValue<A>(A? valuesrc, IConverter<A?, A> desiredconverter = null) where A:struct
+        {
+            if (desiredconverter is not null) return desiredconverter.Convert(valuesrc);
+            return valuesrc??default;
+        }
+        public A? DirectConvertValue<A>(A? valuesrc, IConverter<A?, A?> desiredconverter = null) where A : struct
+        {
+            if (desiredconverter is not null) return desiredconverter.Convert(valuesrc);
+            return valuesrc;
+        }
+        
+        public B DirectConvertValue<A, B>(A valuesrc, IConverter desiredconverter=null)
+        {
+            if (desiredconverter is IConverter<A, B> icab) return icab.Convert(valuesrc);
+            if (valuesrc is null) return default;
+            if (typeof(A) == typeof(B)) return (B)(object)valuesrc;
+
+            var basenullable = Nullable.GetUnderlyingType(typeof(B));
+            if (basenullable != null) return (B)DirectConvertValue(valuesrc,typeof(A), basenullable, desiredconverter);
+        }
+
+
+        public object DirectConvertValue(object valuesrc, Type typesrc, Type typedst,IConverter desiredconverter)
         {
             // Null VALUE
             if (valuesrc == null)
             {
-                if (typedst.IsNullAllowed || typedst.IsNullable) return null;
-                valuesrc = typedst.DefaultValue ?? typedst.Type.GetDefaultValue() ?? throw new Exception("Null not allowed for Conversion");
+                if (bNullable) 
+                    return null;
+                else
+                    return GetDefaultValue(typedst)?? throw new Exception("Null not allowed for Conversion");
             }
             //
             // Nullable VALUE
-            if (typedst.IsNullable)
+            var basenullable = Nullable.GetUnderlyingType(typedst);
+            if (basenullable != null)
             {
-                var newdst = new TypeProxy(typedst.BaseType!, true);
-                return ConvertValue(valuesrc, typesrc, newdst, desireconverter);
+                return DirectConvertValue(valuesrc, typesrc,aNullable, basenullable,false, desiredconverter);
             }
             //
             // Desired Converter
-            if (desireconverter is not null) return desireconverter.Convert(valuesrc, typesrc, typedst);
+            if (desiredconverter is not null) return desiredconverter.Convert(valuesrc);
             //
             // Same Type
-            if (typesrc.Type == typedst.Type)
+            if (typesrc == typedst)
             {
                 return valuesrc;
             }
             //
             // StringConverter
-            if (typedst.IsString)
+            if (Type.GetTypeCode(typedst)==TypeCode.String)
             {
                 return ConvertValueToString(valuesrc, typesrc, typedst);
             }

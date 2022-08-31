@@ -75,13 +75,13 @@ namespace Rop.Mapper
                     enumtype = nulltype;
                 }
 
-                if (!isNullAllowed) DefaultValue = Activator.CreateInstance(type);
+                if (!isNullAllowed) DefaultValue = type.TryGetNotNullDefaultValue();
                 return;
             }
 
             if (!isNullAllowed)
             {
-                DefaultValue = defaultvalue ?? Activator.CreateInstance(type);
+                DefaultValue = defaultvalue ?? type.TryGetNotNullDefaultValue();
             }
             else
             {

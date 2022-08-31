@@ -14,7 +14,6 @@ namespace Rop.Mapper
         private static readonly ConcurrentDictionary<(RuntimeTypeHandle src, RuntimeTypeHandle dsc), RulesCollection> _rulesdic = new();
         private static readonly ConcurrentDictionary<RuntimeTypeHandle, Properties> _propertiessrc = new();
         private static readonly ConcurrentDictionary<RuntimeTypeHandle, Properties> _propertiesdst = new();
-
         private readonly ConcurrentDictionary<string, IConverter> _convertersdic;
         public Dst Map<Dst>(object item) where Dst:class,new()
         {
@@ -31,9 +30,10 @@ namespace Rop.Mapper
             }
         }
 
-        public void Map<Dst>(object item,Dst destiny) where Dst:class
+        public Dst Map<Dst>(object item, Dst destiny) where Dst:class
         {
             Map(item, ref destiny);
+            return destiny;
         }
         public Dst Map<Dst>(object item,Func<Dst> factorydestiny)
         {

@@ -23,6 +23,17 @@ namespace Rop.Mapper
                 return null;
         }
 
+        public static bool HasDefaultConstructor(this Type t)
+        {
+            return t.IsValueType || t.GetConstructor(Type.EmptyTypes)!=null;
+        }
+        public static object? TryGetNotNullDefaultValue(this Type t)
+        {
+            if (!t.HasDefaultConstructor()) return null;
+            return Activator.CreateInstance(t);
+        }
+
+
         public static Type? HasGenericInterface(this Type type, Type genericinterface)
         {
             var ie=type.GetInterfaces()

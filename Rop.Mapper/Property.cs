@@ -63,10 +63,6 @@ public class Property
         var separatoratt = FindAtt<MapsSeparatorAttribute>();
         var separator = separatoratt?.Separator;
         var defaultvalueatt = FindAtt<MapsUseNullValueAttribute>();
-        if (defaultvalueatt is not null)
-        {
-            Debug.Print("Defaultvalue");
-        }
         var defaultvalue = defaultvalueatt?.Value;
         PropertyType = new TypeProxy(PropertyInfo.PropertyType, CanBeNullable, format, separator, defaultvalue);
         return PropertyType;

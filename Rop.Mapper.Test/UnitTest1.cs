@@ -1,3 +1,4 @@
+using System.Collections;
 using Rop.Mapper.Test.Model;
 
 namespace Rop.Mapper.Test
@@ -108,6 +109,16 @@ namespace Rop.Mapper.Test
             Assert.Equal(expected, destiny);
             var reverse=DefaultMapper.Map<OriginUseExtra>(expected);
             Assert.Equal(origin,reverse);
+        }
+        [Fact]
+        public void TestComplex()
+        {
+            var (origin, expected) = MakeClasses.MakeComplex();
+            var destiny = origin.MapTo<DestinyComplex>();
+            var ba1 = new BitArray(destiny.Access).Xor(expected.Access);
+            Assert.True(ba1.OfType<bool>().All(a=>!a));
+            var reverse=DefaultMapper.Map<OriginComplex>(expected);
+            Assert.True(origin.Access.SequenceEqual(reverse.Access));
         }
     }
 }

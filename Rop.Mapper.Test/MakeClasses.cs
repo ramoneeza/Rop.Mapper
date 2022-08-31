@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -251,6 +252,33 @@ namespace Rop.Mapper.Test
                 EnterDateTime    = dt
             };
 
+            return (origin, expected1);
+        }
+        public static (OriginComplex origin, DestinyComplex expected) MakeComplex()
+        {
+            
+            var raw = new byte[] { 0x4, 0x7, 0x3 };
+            var barray = new BitArray(raw);
+            
+            DefaultMapper.RegistryConverterByName<DtToDateOnlyDt>(false,true);
+            DefaultMapper.RegistryConverterByName<DtToTimeOnly>(false,true);
+            var dt = DateTime.Now;
+            var origin = new OriginComplex()
+            {
+                Id = 3,
+                Name = "Pepe",
+                Surname = "Perez",
+                UpdateDate = dt,
+                Access = raw
+            };
+            var expected1 = new DestinyComplex()
+            {
+                Id = origin.Id,
+                Name = origin.Name,
+                Surname = origin.Surname,
+                UpdateDate = dt,
+                Access = barray
+            };
             return (origin, expected1);
         }
     }
