@@ -24,8 +24,8 @@ namespace Rop.Mapper.Test
         {
             var (originok, expectedok) = MakeClasses.MakeNormal();
             var (origin, expected) = MakeClasses.MakeError();
-            var ok1 = Mapper.Verify(originok.GetType(), expectedok.GetType());
-            var ok2 = Mapper.Verify(origin.GetType(), expected.GetType());
+            var ok1 = Mapper.Verify(originok.GetType(), expectedok.GetType(),out var error1);
+            var ok2 = Mapper.Verify(origin.GetType(), expected.GetType(),out var error2);
             Assert.True(ok1);
             Assert.False(ok2);
         }
@@ -33,7 +33,7 @@ namespace Rop.Mapper.Test
         public void TestIgnore()
         {
             var (origin, expected) = MakeClasses.MakeIgnore1();
-            var ok1 = Mapper.Verify(origin.GetType(), expected.GetType());
+            var ok1 = Mapper.Verify(origin.GetType(), expected.GetType(),out var error1);
             Assert.True(ok1);
             var destiny = origin.MapTo<DestinyIgnore1>();
             Assert.Equal(expected, destiny);
@@ -42,8 +42,8 @@ namespace Rop.Mapper.Test
         public void TestIgnore2()
         {
             var (origin, expected1,expected2) = MakeClasses.MakeIgnore2();
-            var ok1 = Mapper.Verify(origin.GetType(), expected1.GetType());
-            var ok2 = Mapper.Verify(origin.GetType(), expected2.GetType());
+            var ok1 = Mapper.Verify(origin.GetType(), expected1.GetType(), out var error1);
+            var ok2 = Mapper.Verify(origin.GetType(), expected2.GetType(),out var error2);
             Assert.True(ok1);
             Assert.False(ok2);
             var destiny1 = origin.MapTo<DestinyIgnore2A>();

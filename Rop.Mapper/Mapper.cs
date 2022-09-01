@@ -130,21 +130,25 @@ namespace Rop.Mapper
                 StringComparer.OrdinalIgnoreCase);
         }
 
-        public static bool Verify(Type src, Type dst)
+        public static bool Verify(Type src, Type dst,out string error)
         {
             var rules = getMapperRules(src, dst);
-            return rules.Verify();
+            return rules.Verify(out error);
         }
-        public static bool Verify<Src,Dst>(bool reverse = false)
+        public static bool Verify<Src,Dst>(out string error,bool reverse = false)
         {
-            if (!Verify(typeof(Src),typeof(Dst))) return false;
-            if (reverse && !Verify(typeof(Dst),typeof(Src))) return false;
+            if (!Verify(typeof(Src),typeof(Dst),out error)) return false;
+            if (reverse && !Verify(typeof(Dst),typeof(Src),out error)) return false;
             return true;
         }
-
         public static void VerifyThrow<Src, Dst>(bool reverse = false)
         {
-            if (!Verify<Src, Dst>(reverse)) throw new Exception($"Mapper failed for verifying {typeof(Src)}{(reverse?"<-->":"--->")}{typeof(Dst)}");
+            if (!Verify<Src, Dst>(out var error, reverse))
+            {
+                error = $"Mapper failed for verifying {typeof(Src)}{(reverse ? "<-->" : "--->")}{typeof(Dst)}" +
+                        Environment.NewLine + error;
+                throw new Exception(error);
+            }
         }
         
         

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Runtime.InteropServices.ComTypes;
+using System.Text;
 using Rop.Mapper.Attributes;
 using Rop.Mapper.Rules;
 
@@ -100,9 +101,16 @@ internal partial class RulesCollection
             return null;
 
     }
-    public bool Verify()
+    public bool Verify(out string error)
     {
-        return !_rules.Any(r => r is RuleError);
+        var sb = new StringBuilder();
+        foreach (var ruleError in _rules.OfType<RuleError>())
+        {
+            sb.AppendLine(ruleError.Error);
+        }
+
+        error = sb.ToString() ?? "";
+        return error == "";
     }
 
     public static RulesCollection? Factory(Type src, Type dst)
