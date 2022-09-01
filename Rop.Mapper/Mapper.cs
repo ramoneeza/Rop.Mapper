@@ -137,8 +137,17 @@ namespace Rop.Mapper
         }
         public static bool Verify<Src,Dst>(out string error,bool reverse = false)
         {
-            if (!Verify(typeof(Src),typeof(Dst),out error)) return false;
-            if (reverse && !Verify(typeof(Dst),typeof(Src),out error)) return false;
+            if (!Verify(typeof(Src), typeof(Dst), out error))
+            {
+                error = $"{typeof(Src)} --> {typeof(Dst)}:" + Environment.NewLine + error;
+                return false;
+            }
+
+            if (reverse && !Verify(typeof(Dst), typeof(Src), out error))
+            {
+                error = $"{typeof(Src)} <-- {typeof(Dst)}:" + Environment.NewLine + error;
+                return false;
+            }
             return true;
         }
         public static void VerifyThrow<Src, Dst>(bool reverse = false)
