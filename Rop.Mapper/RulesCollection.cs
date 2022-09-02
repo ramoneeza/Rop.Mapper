@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Reflection;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Rop.Mapper.Attributes;
@@ -32,9 +33,28 @@ internal partial class RulesCollection
 
         _rules = _rules.OrderBy(r => r.Priority).ToList();
     }
+    private void TraslateGlobalAttributes(Properties srcprop, Properties dstprop)
+    {
+        var clase=srcprop.ClassType;
+        var dst = dstprop.ClassType;
+        var atts = clase.GetCustomAttributes();
+        foreach (var attribute in atts)
+        {
+            switch (attribute)
+            {
+                case MapsIgnoreSomeIfAttribute misia:
+                    TraslateAtt(misia,srcprop,dst);
+                    break;
+                case MapsIgnoreSomeAttribute misa:
+                    TraslateAtt(misa,srcprop);
+                    break;
+            }
+        }
+    }
 
     private void TraslateAttributes(Properties srcprop, Properties dstprop)
     {
+        TraslateGlobalAttributes(srcprop, dstprop);
         TraslateIf(srcprop, dstprop);
         TraslateFrom(srcprop, dstprop);
         AdjustProperty(srcprop);

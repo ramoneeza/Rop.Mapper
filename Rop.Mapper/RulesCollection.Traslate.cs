@@ -124,6 +124,33 @@ namespace Rop.Mapper
             RemoveAtt<MapsConversorAttribute>(fromprop);
             fromprop.Add(new MapsConversorAttribute(ia.Conversor));
         }
+
+        private void TraslateAtt(MapsIgnoreSomeAttribute ia, Properties srcprop)
+        {
+            var props = ia.Properties;
+            TraslateIgnoreAtt(props, srcprop);
+        }
+
+        private void TraslateAtt(MapsIgnoreSomeIfAttribute ia, Properties srcprop, Type dst)
+        {
+            if (ia.Dst != dst) return;
+            var props = ia.Properties;
+            TraslateIgnoreAtt(props, srcprop);
+        }
+
+        private void TraslateIgnoreAtt(string[] name, Properties srcprop)
+        {
+            foreach (var s in name)
+            {
+                var fromprop = srcprop.GetTo(s);
+                if (fromprop is null) continue;
+                RemoveAtt<MapsToAttribute>(fromprop);
+                fromprop.Add(new MapsIgnoreAttribute());
+            }
+        }
+
+
+
         private static void RemoveAtt<T>(Property property) where T:IMapsAttribute
         {
             while (property.HasAtt<T>(out var ma)) property.Remove(ma!);
