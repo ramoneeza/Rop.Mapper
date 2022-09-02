@@ -2,6 +2,7 @@
 
 public class RuleError : IRule
 {
+    public int Priority => 0;
     public string Error { get; }
 
     public RuleError(string error)

@@ -17,5 +17,8 @@ namespace Rop.Mapper.Rules
         {
             return RuleUseMethod.Factory(scrprops.ClassType,dst, prop, useatt);
         }
+
+        internal static IRule RuleDate(Property psrc, Property pdst) => Rules.RuleDate.Factory(psrc, pdst);
+        internal static IRule RuleTime(Property psrc, Property pdst) => Rules.RuleTime.Factory(psrc, pdst);
     }
 }

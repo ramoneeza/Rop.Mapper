@@ -27,6 +27,12 @@ namespace Rop.Mapper
                         case MapsConversorIfAttribute mconversor:
                             TraslateAtt(mconversor, property, dstprop);
                             break;
+                        case MapsDateToIfAttribute mdateto:
+                            TraslateAtt(mdateto, property, dstprop);
+                            break;
+                        case MapsTimeToIfAttribute mtimeto:
+                            TraslateAtt(mtimeto, property, dstprop);
+                            break;
                         default:
                             throw new ArgumentException("{att} unknown");
                     }
@@ -62,6 +68,21 @@ namespace Rop.Mapper
             if (ia.Dst!=dstprop.ClassType) return;
             property.Add(new MapsIgnoreAttribute());
         }
+        private void TraslateAtt(MapsTimeToIfAttribute ia, Property property, Properties dstprop)
+        {
+            property.Remove(ia);
+            RemoveAtt<MapsTimeToAttribute>(property);
+            if (ia.Dst!=dstprop.ClassType) return;
+            property.Add(new MapsTimeToAttribute(ia.Name));
+        }
+        private void TraslateAtt(MapsDateToIfAttribute ia, Property property, Properties dstprop)
+        {
+            property.Remove(ia);
+            RemoveAtt<MapsDateToAttribute>(property);
+            if (ia.Dst!=dstprop.ClassType) return;
+            property.Add(new MapsDateToAttribute(ia.Name));
+        }
+
         private void TraslateAtt(MapsToIfAttribute ia, Property property, Properties dstprop)
         {
             property.Remove(ia);

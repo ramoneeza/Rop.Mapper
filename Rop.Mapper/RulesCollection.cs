@@ -11,7 +11,7 @@ internal partial class RulesCollection
 {
     public Type SrcType { get; }
     public Type DstType { get; }
-    private readonly List<IRule> _rules=new List<IRule>();
+    private List<IRule> _rules=new List<IRule>();
     private RulesCollection(Type src,Type dst)
     {
         SrcType = src;
@@ -29,6 +29,8 @@ internal partial class RulesCollection
             var propertyrule =FactoryRuleDst(property, srcprop);
             if (propertyrule!=null) _rules.Add(propertyrule);
         }
+
+        _rules = _rules.OrderBy(r => r.Priority).ToList();
     }
 
     private void TraslateAttributes(Properties srcprop, Properties dstprop)
@@ -51,6 +53,19 @@ internal partial class RulesCollection
             yield return FactoryRuleMapsTo(name, prop, dstprops);
             yield break;
         }
+        if (prop.HasAtt<MapsDateToAttribute>(out var mapsdatetoatt))
+        {
+            var name = mapsdatetoatt!.Name;
+            yield return FactoryRuleDateTo(name, prop, dstprops);
+            yield break;
+        }
+        if (prop.HasAtt<MapsTimeToAttribute>(out var mapstimetoatt))
+        {
+            var name = mapstimetoatt!.Name;
+            yield return FactoryRuleTimeTo(name, prop, dstprops);
+            yield break;
+        }
+
         var extra = prop.Attributes.OfType<MapsToExtraAttribute>().ToList();
         if (extra.Any())
         {
@@ -92,6 +107,19 @@ internal partial class RulesCollection
             return Rule.RuleSubProperty(prop, dstprefix, dstpropsub,converter);
         }
     }
+    private static IRule FactoryRuleDateTo(string name, Property prop, Properties dstprops)
+    {
+        var dstprop = dstprops.Get(name);
+        if (dstprop is null) return Rule.Error($"Destiny has not {name} property");
+        return Rule.RuleDate(prop, dstprop);
+    }
+    private static IRule FactoryRuleTimeTo(string name, Property prop, Properties dstprops)
+    {
+        var dstprop = dstprops.Get(name);
+        if (dstprop is null) return Rule.Error($"Destiny has not {name} property");
+        return Rule.RuleTime(prop, dstprop);
+    }
+
 
     private IRule? FactoryRuleDst(Property prop, Properties srcprops)
     {
@@ -119,5 +147,4 @@ internal partial class RulesCollection
     }
 
     public IEnumerable<IRule> GetAll() => _rules;
-
 }

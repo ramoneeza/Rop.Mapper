@@ -2,6 +2,7 @@
 
 internal class RuleIgnore : IRule
 {
+    public int Priority => 0;
     public Property property { get; }
     public RuleIgnore(Property property)
     {

@@ -6,6 +6,7 @@ namespace Rop.Mapper.Rules;
 
 public class RuleStd : IRule
 {
+    public int Priority => 1;
     internal Property PSrc { get; }
     internal Property PDst { get;}
     private string? Conversor { get; }

@@ -4,6 +4,7 @@ namespace Rop.Mapper.Rules;
 
 public class RuleSubProperty : IRule
 {
+    public int Priority => 1;
     internal Property PSrc { get; }
     internal Property PDst { get;}
     internal Property PDstSub { get; }

@@ -311,6 +311,30 @@ namespace Rop.Mapper.Test
 
             return (origin, expected1,expected2);
         }
+        public static (OriginDateTime origin, DestinyDateTime expected) MakeDateTime()
+        {
+            var origin = new OriginDateTime()
+            {
+                Id = 3,
+                Name = "Pepe",
+                Surname = "Perez",
+                UpdateDate = new DateTime(2022, 1, 4),
+                UpdateTime = new TimeSpan(8,45,10),
+                ModifyDate = new DateOnly(2022, 6, 5),
+                ModifyTime = new TimeOnly(9,30,0)
+                
+            };
+            var expected1 = new DestinyDateTime()
+            {
+                Id = origin.Id,
+                Name = origin.Name,
+                Surname = origin.Surname,
+                UpdateDate = origin.UpdateDate.Add(origin.UpdateTime),
+                ModifyDate = origin.ModifyDate.Value.ToDateTime(origin.ModifyTime.Value)
+            };
+            
+            return (origin, expected1);
+        }
     }
     
 }

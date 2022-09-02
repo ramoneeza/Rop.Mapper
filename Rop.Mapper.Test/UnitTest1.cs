@@ -129,5 +129,12 @@ namespace Rop.Mapper.Test
             Assert.Equal(expected1.Groups, destiny1.Groups);
             Assert.Equal(expected2.Groups, destiny2.Groups);
         }
+        [Fact]
+        public void TestDateTime()
+        {
+            var (origin, expected) = MakeClasses.MakeDateTime();
+            var destiny = origin.MapTo<DestinyDateTime>();
+            Assert.Equal(expected, destiny);
+        }
     }
 }

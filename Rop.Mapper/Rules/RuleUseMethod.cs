@@ -6,6 +6,7 @@ namespace Rop.Mapper.Rules;
 
 public class RuleUseMethod : IRule
 {
+    public int Priority => 2;
     internal Type Src { get; }
     internal Type Dst { get; }
     private MethodInfo Method { get; }
