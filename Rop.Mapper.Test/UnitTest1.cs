@@ -136,5 +136,14 @@ namespace Rop.Mapper.Test
             var destiny = origin.MapTo<DestinyDateTime>();
             Assert.Equal(expected, destiny);
         }
+        [Fact]
+        public void TestIgnoreGlobal()
+        {
+            var (origin, expected1,expected2) = MakeClasses.MakeIgnoreGlobal();
+            var destiny1 = origin.MapTo<DestinyIgnore1Global>();
+            var destiny2 = origin.MapTo<DestinyIgnore2Global>();
+            Assert.Equal(expected1, destiny1);
+            Assert.Equal(expected2, destiny2);
+        }
     }
 }

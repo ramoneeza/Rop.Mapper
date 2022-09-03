@@ -335,6 +335,30 @@ namespace Rop.Mapper.Test
             
             return (origin, expected1);
         }
+        public static (OriginIgnoreGlobal origin, DestinyIgnore1Global expected1,DestinyIgnore2Global expected2) MakeIgnoreGlobal()
+        {
+            var origin = new OriginIgnoreGlobal()
+            {
+                Name = "Pepe",
+                Surname = "Perez",
+                City = "Almeria",
+                Phone = "1112133",
+                Street = "Mediterraneo"
+            };
+            var expected1 = new DestinyIgnore1Global()
+            {
+                Name = origin.Name,
+                Surname = origin.Surname,
+            Phone    = origin.Phone
+            };
+            var expected2 = new DestinyIgnore2Global()
+            {
+                Name = origin.Name,
+                Surname = origin.Surname,
+            };
+
+            return (origin, expected1,expected2);
+        }
     }
     
 }
