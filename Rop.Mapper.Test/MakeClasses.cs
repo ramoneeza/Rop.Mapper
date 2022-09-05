@@ -231,6 +231,30 @@ namespace Rop.Mapper.Test
 
             return (origin, expected1);
         }
+        public static (OriginFlat origin, DestinyFlat expected) MakeFlat()
+        {
+            var origin = new OriginFlat()
+            {
+                Id = 3,
+                Name = "Pepe",
+                Surname = "Perez",
+                Address = new(){
+                City = "Almeria",
+                PostalCode = "04004",
+                Country = "Spain",
+                Street = "C/ Mediterraneo"
+                }
+            };
+            var expected1 = new DestinyFlat()
+            {
+                Id = origin.Id,
+                Name = origin.Name,
+                Surname = origin.Surname,
+                City = origin.Address.City, PostalCode = origin.Address.PostalCode, Street = origin.Address.Street, Country = origin.Address.Country 
+            };
+            return (origin, expected1);
+        }
+
         public static (OriginUseExtra origin, DestinyUseExtra expected) MakeUseExtra()
         {
             DefaultMapper.RegistryConverterByName<DtToDateOnlyDt>(false,true);

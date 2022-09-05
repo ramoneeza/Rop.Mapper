@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,5 +21,6 @@ namespace Rop.Mapper.Rules
 
         internal static IRule RuleDate(Property psrc, Property pdst) => Rules.RuleDate.Factory(psrc, pdst);
         internal static IRule RuleTime(Property psrc, Property pdst) => Rules.RuleTime.Factory(psrc, pdst);
+        internal static IRule RuleFlat(Property psrc, Type dst) => Rules.RuleFlat.Factory(psrc, dst);
     }
 }

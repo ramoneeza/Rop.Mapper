@@ -85,6 +85,12 @@ internal partial class RulesCollection
             yield return FactoryRuleTimeTo(name, prop, dstprops);
             yield break;
         }
+        if (prop.HasAtt<MapsFlatAttribute>(out var mapsflatatt))
+        {
+            yield return FactoryRuleFlat(prop, dstprops);
+            yield break;
+        }
+
 
         var extra = prop.Attributes.OfType<MapsToExtraAttribute>().ToList();
         if (extra.Any())
@@ -127,6 +133,11 @@ internal partial class RulesCollection
             return Rule.RuleSubProperty(prop, dstprefix, dstpropsub,converter);
         }
     }
+    private static IRule FactoryRuleFlat(Property prop, Properties dstprops)
+    {
+       return Rule.RuleFlat(prop, dstprops.ClassType);
+    }
+
     private static IRule FactoryRuleDateTo(string name, Property prop, Properties dstprops)
     {
         var dstprop = dstprops.Get(name);

@@ -33,6 +33,9 @@ namespace Rop.Mapper
                         case MapsTimeToIfAttribute mtimeto:
                             TraslateAtt(mtimeto, property, dstprop);
                             break;
+                        case MapsFlatIfAttribute mflat:
+                            TraslateAtt(mflat,property,dstprop);
+                            break;
                         default:
                             throw new ArgumentException("{att} unknown");
                     }
@@ -74,6 +77,13 @@ namespace Rop.Mapper
             RemoveAtt<MapsTimeToAttribute>(property);
             if (ia.Dst!=dstprop.ClassType) return;
             property.Add(new MapsTimeToAttribute(ia.Name));
+        }
+        private void TraslateAtt(MapsFlatIfAttribute ia, Property property, Properties dstprop)
+        {
+            property.Remove(ia);
+            RemoveAtt<MapsFlatIfAttribute>(property);
+            if (ia.Dst!=dstprop.ClassType) return;
+            property.Add(new MapsFlatAttribute());
         }
         private void TraslateAtt(MapsDateToIfAttribute ia, Property property, Properties dstprop)
         {

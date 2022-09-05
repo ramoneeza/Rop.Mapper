@@ -145,5 +145,12 @@ namespace Rop.Mapper.Test
             Assert.Equal(expected1, destiny1);
             Assert.Equal(expected2, destiny2);
         }
+        [Fact]
+        public void TestFlat()
+        {
+            var (origin, expected1) = MakeClasses.MakeFlat();
+            var destiny1 = origin.MapTo<DestinyFlat>();
+            Assert.Equal(expected1, destiny1);
+        }
     }
 }
