@@ -1,70 +1,83 @@
-﻿using System.Diagnostics;
+﻿using Rop.Mapper.Attributes;
+using Rop.Types;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
-using Rop.Mapper.Attributes;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Rop.Mapper;
-
-public class Property
+namespace Rop.Mapper
 {
-    protected List<IMapsAttribute> BaseAttributes;
-    public PropertyInfo PropertyInfo { get; }
-    public string PropertyName=>PropertyInfo.Name;
-    public bool CanBeNullable { get; }
-    public TypeProxy PropertyType { get; private set; }
-    public IReadOnlyList<IMapsAttribute> Attributes=>BaseAttributes;
-
-    private Property(PropertyInfo pinfo, IEnumerable<IMapsAttribute> atts)
+    public struct TypeDecorator
     {
-        PropertyInfo = pinfo;
-        BaseAttributes = new List<IMapsAttribute>(atts);
-        CanBeNullable = pinfo.CanBeNullable();
-        PropertyType = AdjustType();
+        public string? Format;
+        public string? Separator;
+        public object? UserNullValue;
     }
 
-    public Property(PropertyInfo pinfo):this(pinfo, pinfo.GetCustomAttributes().OfType<IMapsAttribute>())
+    public class Property
     {
-    }
+        protected List<IMapsAttribute> BaseAttributes;
+        public IPropertyProxy PropertyProxy { get; }
+        public string PropertyName => PropertyProxy.Name;
+        public bool CanBeNullable => PropertyProxy.IsNullAllowed;
+        public ITypeProxy PropertyType => PropertyProxy.PropertyType;
+        private TypeDecorator _typeDecorator;
+        public string? Format => _typeDecorator.Format;
+        public string? Separator => _typeDecorator.Separator;
+        public object? UserNullValue => _typeDecorator.UserNullValue;
+        public TypeDecorator TypeDecorator => _typeDecorator;
 
-    public string MapsTo()
-    {
-        if (HasAtt<MapsToAttribute>(out var matt)) return matt!.Name;
-        return PropertyName;
-    }
-    public Property(Property property) : this(property.PropertyInfo,property.BaseAttributes)
-    {
-    }
+        public IReadOnlyList<IMapsAttribute> Attributes => BaseAttributes;
 
-     public T? FindAtt<T>(Func<T, bool> func) where T:IMapsAttribute
-    {
-        return Attributes.OfType<T>().FirstOrDefault(func);
-    }
-    public T? FindAtt<T>() where T : IMapsAttribute
-    {
-        return Attributes.OfType<T>().FirstOrDefault();
-    }
+        private Property(IPropertyProxy pproxy, IEnumerable<IMapsAttribute>? atts=null)
+        {
+            PropertyProxy = pproxy;
+            atts ??= pproxy.Attributes.OfType<IMapsAttribute>();
+            BaseAttributes = new List<IMapsAttribute>(atts);
+            AdjustType();
+        }
+        public Property(PropertyInfo pinfo, IEnumerable<IMapsAttribute>? atts=null):this(Rop.Types.PropertyProxy.Get(pinfo)!,atts)
+        {
+        }
+        public string MapsTo()
+        {
+            if (HasAtt<MapsToAttribute>(out var matt)) return matt!.Name;
+            return PropertyName;
+        }
+        public Property(Property property) : this(property.PropertyProxy, property.BaseAttributes)
+        {
+        }
+        public T? FindAtt<T>(Func<T, bool> func) where T : IMapsAttribute
+        {
+            return Attributes.OfType<T>().FirstOrDefault(func);
+        }
+        public T? FindAtt<T>() where T : IMapsAttribute
+        {
+            return Attributes.OfType<T>().FirstOrDefault();
+        }
+        public bool HasAtt<T>(out T? o) where T : IMapsAttribute
+        {
+            o = FindAtt<T>();
+            return o is not null;
+        }
+        public override string ToString()
+        {
+            return $"{PropertyName}({PropertyType})";
+        }
+        internal void Remove(IMapsAttribute att) => BaseAttributes.Remove(att);
+        internal void Add(IMapsAttribute att) => BaseAttributes.Add(att);
 
-    public bool HasAtt<T>(out T? o) where T:IMapsAttribute
-    {
-        o = FindAtt<T>();
-        return o is not null;
-    }
-
-    public override string ToString()
-    {
-        return $"{PropertyName}({PropertyType})";
-    }
-    internal void Remove(IMapsAttribute att) => BaseAttributes.Remove(att);
-    internal void Add(IMapsAttribute att) => BaseAttributes.Add(att);
-
-    internal TypeProxy AdjustType()
-    {
-        var formatatt = FindAtt<MapsFormatAttribute>();
-        var format = formatatt?.Format;
-        var separatoratt = FindAtt<MapsSeparatorAttribute>();
-        var separator = separatoratt?.Separator;
-        var defaultvalueatt = FindAtt<MapsUseNullValueAttribute>();
-        var defaultvalue = defaultvalueatt?.Value;
-        PropertyType = new TypeProxy(PropertyInfo.PropertyType, CanBeNullable, format, separator, defaultvalue);
-        return PropertyType;
+        internal void AdjustType()
+        {
+            var formatatt = FindAtt<MapsFormatAttribute>();
+            _typeDecorator.Format = formatatt?.Format;
+            var separatoratt = FindAtt<MapsSeparatorAttribute>();
+            _typeDecorator.Separator = separatoratt?.Separator;
+            var defaultvalueatt = FindAtt<MapsUseNullValueAttribute>();
+            _typeDecorator.UserNullValue = defaultvalueatt?.Value;
+        }
     }
 }

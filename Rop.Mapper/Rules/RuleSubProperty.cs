@@ -1,4 +1,5 @@
 ﻿using Rop.Mapper.Attributes;
+using Rop.Types;
 
 namespace Rop.Mapper.Rules;
 
@@ -46,21 +47,21 @@ public class RuleSubProperty : IRule
 
     public virtual void Apply(Mapper mapper, object src, object dst)
     {
-        var value = PSrc.PropertyInfo.GetValue(src);
+        var value = PSrc.PropertyProxy.GetValue(src);
         var dstvalue = ConvertValue(mapper, value);
-        var prefixvalue = PDst.PropertyInfo.GetValue(dst);
+        var prefixvalue = PDst.PropertyProxy.GetValue(dst);
         if (prefixvalue is null)
         {
             prefixvalue = Activator.CreateInstance(PDst.PropertyType.Type);
-            PDst.PropertyInfo.SetValue(dst,prefixvalue);
+            PDst.PropertyProxy.SetValue(dst,prefixvalue);
         }
-        PDstSub.PropertyInfo.SetValue(prefixvalue, dstvalue);
+        PDstSub.PropertyProxy.SetValue(prefixvalue, dstvalue);
     }
     protected virtual object? ConvertValue(Mapper mapper, object? valuesrc)
     {
         var typesrc = PSrc.PropertyType;
         var typedst=PDstSub.PropertyType;
         var converter = (Converter is not null) ? mapper.GetConverter(Converter) : mapper.GetConverter(typesrc.Type,typedst.Type);
-        return ConversionEngine.ConvertValue(valuesrc, typesrc, typedst,converter);
+        return ConversionEngine.ConvertValue(valuesrc, typesrc,PSrc.TypeDecorator,  typedst,PDstSub.TypeDecorator,converter);
     }
 }

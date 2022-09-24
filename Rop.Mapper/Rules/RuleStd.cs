@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Globalization;
 using Rop.Mapper.Attributes;
+using Rop.Types;
 
 namespace Rop.Mapper.Rules;
 
@@ -42,15 +43,15 @@ public class RuleStd : IRule
 
     public virtual void Apply(Mapper mapper, object src, object dst)
     {
-        var value = PSrc.PropertyInfo.GetValue(src);
+        var value = PSrc.PropertyProxy.GetValue(src);
         var dstvalue = ConvertValue(mapper, value);
-        PDst.PropertyInfo.SetValue(dst, dstvalue);
+        PDst.PropertyProxy.SetValue(dst, dstvalue);
     }
     protected virtual object? ConvertValue(Mapper mapper, object? valuesrc)
     {
         var typesrc = PSrc.PropertyType;
         var typedst=PDst.PropertyType;
         var converter = (Conversor is not null) ? mapper.GetConverter(Conversor) : mapper.GetConverter(typesrc.Type,typedst.Type);
-        return ConversionEngine.ConvertValue(valuesrc, typesrc, typedst,converter);
+        return ConversionEngine.ConvertValue(valuesrc, typesrc,PSrc.TypeDecorator, typedst,PDst.TypeDecorator, converter);
     }
 }

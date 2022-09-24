@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using Rop.Mapper.Attributes;
+using Rop.Types;
 
 namespace Rop.Mapper.Rules;
 
@@ -40,13 +41,13 @@ public class RuleDate : IRule
 
     public virtual void Apply(Mapper mapper, object src, object dst)
     {
-        var value = PSrc.PropertyInfo.GetValue(src);
+        var value = PSrc.PropertyProxy.GetValue(src);
         DateTime? final = value switch
         {
             DateTime dt => dt,
             DateOnly don => don.ToDateTime(TimeOnly.MinValue),
             _ => null
         };
-        PDst.PropertyInfo.SetValue(dst, final);
+        PDst.PropertyProxy.SetValue(dst, final);
     }
 }

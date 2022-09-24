@@ -4,6 +4,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Rop.Mapper.Attributes;
 using Rop.Mapper.Rules;
+using Rop.Types;
 
 
 namespace Rop.Mapper;
@@ -90,8 +91,6 @@ internal partial class RulesCollection
             yield return FactoryRuleFlat(prop, dstprops);
             yield break;
         }
-
-
         var extra = prop.Attributes.OfType<MapsToExtraAttribute>().ToList();
         if (extra.Any())
         {

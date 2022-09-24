@@ -1,4 +1,6 @@
-﻿namespace Rop.Mapper.Rules;
+﻿using Rop.Types;
+
+namespace Rop.Mapper.Rules;
 
 internal class RuleIgnore : IRule
 {

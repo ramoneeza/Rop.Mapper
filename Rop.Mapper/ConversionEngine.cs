@@ -7,26 +7,27 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Rop.Mapper.Rules;
+using Rop.Types;
 
 namespace Rop.Mapper
 {
     public static class ConversionEngine
     {
-        public static object? ConvertValue(object? valuesrc, TypeProxy typesrc, TypeProxy typedst, IConverter? desireconverter)
+        public static object? ConvertValue(object? valuesrc, ITypeProxy typesrc,TypeDecorator srcDecorator, ITypeProxy typedst,TypeDecorator dstDecorator, IConverter? desireconverter)
         {
             // Null VALUE
             if (valuesrc == null)
             {
                 if (typedst.IsNullAllowed || typedst.IsNullable) return null;
                 if (desireconverter is not null && desireconverter.CanConvertNull) return desireconverter.Convert(valuesrc, typesrc, typedst);
-                return typedst.DefaultValue ?? typedst.Type.GetDefaultValue() ?? throw new Exception("Null not allowed for Conversion");
+                return typedst.GetDefaultValue() ?? typedst.Type.GetDefaultValue() ?? throw new Exception("Null not allowed for Conversion");
             }
             //
             // Nullable VALUE
             if (typedst.IsNullable)
             {
-                var newdst = new TypeProxy(typedst.BaseType!, true);
-                return ConvertValue(valuesrc, typesrc, newdst, desireconverter);
+                var newdst = typedst.BaseType!;
+                return ConvertValue(valuesrc, typesrc,srcDecorator, newdst,dstDecorator, desireconverter);
             }
             //
             // Desired Converter
@@ -41,7 +42,7 @@ namespace Rop.Mapper
             // StringConverter
             if (typedst.IsString)
             {
-                return ConvertValueToString(valuesrc, typesrc, typedst);
+                return ConvertValueToString(valuesrc, typesrc,srcDecorator, typedst,dstDecorator);
             }
             //
             // EnumConverter
@@ -60,7 +61,7 @@ namespace Rop.Mapper
             if (typesrc.IsString && typedst.IsEnumerable)
             {
                 var s = (valuesrc as string)!;
-                return ConvertStringToEnumerable(s, typesrc, typedst);
+                return ConvertStringToEnumerable(s, typesrc,srcDecorator, typedst,dstDecorator);
             }
             //
             // Raw Conversion
@@ -68,7 +69,7 @@ namespace Rop.Mapper
             return resfinal;
         }
 
-        private static string ConvertSimpleValueToString(object value, string format)
+        private static string ConvertSimpleValueToString(object value, string? format)
         {
             // No DesiredFormat or not IFormattable value
             if (string.IsNullOrEmpty(format) || value is not IFormattable fvalue)
@@ -78,9 +79,9 @@ namespace Rop.Mapper
         }
 
 
-        private static string ConvertValueToString(object valuesrc, TypeProxy origin, TypeProxy destiny)
+        private static string ConvertValueToString(object valuesrc, ITypeProxy origin,TypeDecorator srcDecorator, ITypeProxy destiny,TypeDecorator destinyDecorator)
         {
-            var format = destiny.Format;
+            var format = destinyDecorator.Format;
             // Primitive value
             if (origin.TypeCode != TypeCode.Object)
             {
@@ -89,7 +90,7 @@ namespace Rop.Mapper
             // Array or List
             if (origin.IsArray || origin.IsList)
             {
-                var separator = destiny.Separator;
+                var separator = destinyDecorator.Separator;
                 if (valuesrc is not IEnumerable valuesrcenumerable)
                     throw new InvalidCastException("Can't convert to IEnumerable");
                 var list = valuesrcenumerable.Cast<object>().Select(o => ConvertSimpleValueToString(o, format))
@@ -100,7 +101,7 @@ namespace Rop.Mapper
             return ConvertSimpleValueToString(valuesrc, format);
         }
 
-        private static object ConvertValueToEnum(object valuesrc, TypeProxy origin, TypeProxy destiny)
+        private static object ConvertValueToEnum(object valuesrc, ITypeProxy origin, ITypeProxy destiny)
         {
 
             // String to Enum
@@ -110,45 +111,44 @@ namespace Rop.Mapper
             // Other types
             var enumt = destiny.BaseType!;
             // Same base type
-            if (origin.TypeCode == Type.GetTypeCode(enumt)) return valuesrc;
+            if (origin.TypeCode == Type.GetTypeCode(enumt.Type)) return valuesrc;
             // Different base tipo
-            var e = Convert.ChangeType(valuesrc, enumt);
+            var e = Convert.ChangeType(valuesrc, enumt.Type);
             return e;
         }
 
-        private static object ConvertEnumerableToEnumerable(object valuesrc, TypeProxy origin, TypeProxy destiny)
+        private static object ConvertEnumerableToEnumerable(object valuesrc, ITypeProxy origin, ITypeProxy destiny)
         {
             if (origin.BaseType != destiny.BaseType) throw new InvalidCastException($"Can't change IEnumerable of {origin.BaseType} to IEnumerable of {destiny.BaseType}");
             var ve = valuesrc as IEnumerable;
             if (destiny.IsArray)
             {
-                return TypeHelper.CreateArray(ve!, destiny.BaseType!);
+                return EnumerableHelper.CastToArray(ve!, destiny.BaseType!.Type);
             }
             if (destiny.IsList)
             {
-                return TypeHelper.CreateList(ve!, destiny.BaseType!);
+                return EnumerableHelper.CastToList(ve!, destiny.BaseType!.Type);
             }
             throw new InvalidCastException($"Can't change {origin} to {destiny}");
         }
 
-        private static object ConvertStringToEnumerable(string valuesrc, TypeProxy origin, TypeProxy destiny)
+        private static object ConvertStringToEnumerable(string valuesrc, ITypeProxy origin,TypeDecorator origindecorator,  ITypeProxy destiny,TypeDecorator destinyDecorator)
         {
-            var separator = origin.Separator.FirstOrDefault();
-            var format = destiny.Format;
+            var separator = origindecorator.Separator?.FirstOrDefault()??',';
+            var format = destinyDecorator.Format;
             var ve = valuesrc.Split(separator);
-            if (destiny.BaseType != typeof(string))
+            if (destiny.BaseType!.Type != typeof(string))
             {
-                var vei = ve.Select(s => Convert.ChangeType(s, destiny.BaseType!)).ToList();
-                var neworigin = new TypeProxy(vei.GetType(), false);
+                var vei = ve.Select(s => Convert.ChangeType(s, destiny.BaseType!.Type)).ToList();
+                var neworigin =TypeProxy.Get(vei.GetType(), false);
                 return ConvertEnumerableToEnumerable(vei, neworigin, destiny);
             }
             else
             {
-                var neworigin = new TypeProxy(ve.GetType(), false);
+                var neworigin = TypeProxy.Get(ve.GetType(), false);
                 return ConvertEnumerableToEnumerable(ve, neworigin, destiny);
             }
         }
-
     }
     
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Rop.Mapper.Attributes;
+using Rop.Types;
 
 namespace Rop.Mapper
 {

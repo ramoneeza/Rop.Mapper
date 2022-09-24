@@ -1,4 +1,5 @@
 ﻿using Rop.Mapper.Attributes;
+using Rop.Types;
 
 namespace Rop.Mapper.Rules;
 
@@ -39,8 +40,8 @@ public class RuleTime : IRule
 
     public virtual void Apply(Mapper mapper, object src, object dst)
     {
-        var value = PSrc.PropertyInfo.GetValue(src);
-        var datetime = PDst.PropertyInfo.GetValue(dst) as DateTime?;
+        var value = PSrc.PropertyProxy.GetValue(src);
+        var datetime = PDst.PropertyProxy.GetValue(dst) as DateTime?;
         if (datetime is null || value is null) return;
         DateTime? final = value switch
         {
@@ -48,6 +49,6 @@ public class RuleTime : IRule
             TimeOnly don =>datetime.Value.Date.Add(don.ToTimeSpan()),
             _ => null
         };
-        PDst.PropertyInfo.SetValue(dst, final);
+        PDst.PropertyProxy.SetValue(dst, final);
     }
 }

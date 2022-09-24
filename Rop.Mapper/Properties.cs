@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using Rop.Mapper.Attributes;
 using System.Reflection;
-using Rop.Mapper.Attributes;
-
 namespace Rop.Mapper;
+
+
 
 internal class Properties
 {
@@ -17,24 +17,22 @@ internal class Properties
             _dic[prop.PropertyName] = prop;
         }
     }
-
-    public Properties(Type classtype,IEnumerable<PropertyInfo> props)
+    public Properties(Type classtype, IEnumerable<PropertyInfo> props)
     {
         ClassType = classtype;
         foreach (var propertyInfo in props)
         {
-            var prop=new Property(propertyInfo);
+            var prop =new Property(propertyInfo);
             _dic[prop.PropertyName] = prop;
         }
     }
-
     public static Properties FactorySrc(Type src)
     {
-        return new Properties(src,src.GetProperties().Where(p => p.CanRead));
+        return new Properties(src, src.GetProperties().Where(p => p.CanRead));
     }
     public static Properties FactoryDst(Type dst)
     {
-        return new Properties(dst,dst.GetProperties().Where(p => p.CanWrite));
+        return new Properties(dst, dst.GetProperties().Where(p => p.CanWrite));
     }
 
     public IEnumerable<Property> GetAll() => _dic.Values;
@@ -50,9 +48,10 @@ internal class Properties
         if (candidates.Count != 1) return null;
         return candidates[0];
     }
-    
+
     public IEnumerable<Property> GetAllFrom()
     {
         return GetAll().Where(p => p.Attributes.Any(a => a is IMapsFromAttribute));
     }
 }
+

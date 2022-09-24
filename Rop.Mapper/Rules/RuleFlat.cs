@@ -1,4 +1,5 @@
 ﻿using Rop.Mapper.Attributes;
+using Rop.Types;
 
 namespace Rop.Mapper.Rules;
 
@@ -44,7 +45,7 @@ public class RuleFlat : IRule
     }
     public virtual void Apply(Mapper mapper, object src, object dst)
     {
-        var value = PSrc.PropertyInfo.GetValue(src);
+        var value = PSrc.PropertyProxy.GetValue(src);
         if (value is null || SubRules is null) return;
         foreach (var rule in SubRules.GetAll())
         {

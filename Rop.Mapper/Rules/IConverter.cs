@@ -1,4 +1,6 @@
-﻿namespace Rop.Mapper.Rules;
+﻿using Rop.Types;
+
+namespace Rop.Mapper.Rules;
 
 public interface IConverter
 {
@@ -6,7 +8,7 @@ public interface IConverter
     Type BType { get; }
     string Name { get; }
     bool CanConvertNull { get; }
-    object? Convert(object? value,TypeProxy typesrc,TypeProxy typedst);
+    object? Convert(object? value,ITypeProxy typesrc,ITypeProxy typedst);
     public string TypeKey()
     {
         var key = TypeKey(AType,BType);
