@@ -18,7 +18,8 @@ namespace Rop.Mapper
             if (valuesrc == null)
             {
                 if (typedst.IsNullAllowed || typedst.IsNullable) return null;
-                valuesrc = typedst.DefaultValue ?? typedst.Type.GetDefaultValue() ?? throw new Exception("Null not allowed for Conversion");
+                if (desireconverter is not null && desireconverter.CanConvertNull) return desireconverter.Convert(valuesrc, typesrc, typedst);
+                return typedst.DefaultValue ?? typedst.Type.GetDefaultValue() ?? throw new Exception("Null not allowed for Conversion");
             }
             //
             // Nullable VALUE

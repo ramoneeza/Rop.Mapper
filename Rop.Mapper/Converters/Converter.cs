@@ -13,6 +13,7 @@ namespace Rop.Mapper.Converters
     {
         public Type AType { get; }
         public Type BType { get; }
+        public virtual bool CanConvertNull => false;
         public virtual string Name { get; }
         object? IConverter.Convert(object? value, TypeProxy typesrc, TypeProxy typedst)
         {

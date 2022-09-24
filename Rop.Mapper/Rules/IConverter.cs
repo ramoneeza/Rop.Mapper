@@ -5,6 +5,7 @@ public interface IConverter
     Type AType { get; }
     Type BType { get; }
     string Name { get; }
+    bool CanConvertNull { get; }
     object? Convert(object? value,TypeProxy typesrc,TypeProxy typedst);
     public string TypeKey()
     {
