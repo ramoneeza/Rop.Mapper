@@ -7,32 +7,23 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Rop.Mapper.Rules;
 
 namespace Rop.Mapper
 {
-    public struct TypeDecorator
+    public class Property:IEquatable<Property>
     {
-        public string? Format;
-        public string? Separator;
-        public object? UserNullValue;
-    }
-
-    public class Property
-    {
-        protected List<IMapsAttribute> BaseAttributes;
+        private readonly List<IMapsAttribute> BaseAttributes;
         public IPropertyProxy PropertyProxy { get; }
         public string PropertyName => PropertyProxy.Name;
         public bool CanBeNullable => PropertyProxy.IsNullAllowed;
-        public ITypeProxy PropertyType => PropertyProxy.PropertyType;
-        private TypeDecorator _typeDecorator;
-        public string? Format => _typeDecorator.Format;
-        public string? Separator => _typeDecorator.Separator;
-        public object? UserNullValue => _typeDecorator.UserNullValue;
-        public TypeDecorator TypeDecorator => _typeDecorator;
-
+        public PropertyType PropertyType { get; private set; }
+        
         public IReadOnlyList<IMapsAttribute> Attributes => BaseAttributes;
 
+#pragma warning disable CS8618
         private Property(IPropertyProxy pproxy, IEnumerable<IMapsAttribute>? atts=null)
+#pragma warning restore CS8618
         {
             PropertyProxy = pproxy;
             atts ??= pproxy.Attributes.OfType<IMapsAttribute>();
@@ -67,17 +58,54 @@ namespace Rop.Mapper
         {
             return $"{PropertyName}({PropertyType})";
         }
-        internal void Remove(IMapsAttribute att) => BaseAttributes.Remove(att);
-        internal void Add(IMapsAttribute att) => BaseAttributes.Add(att);
+        internal void Remove(IMapsAttribute att)
+        {
+            BaseAttributes.Remove(att);
+            AdjustType();
+        }
+
+        internal void Add(IMapsAttribute att)
+        {
+            BaseAttributes.Add(att);
+            AdjustType();
+        }
 
         internal void AdjustType()
         {
             var formatatt = FindAtt<MapsFormatAttribute>();
-            _typeDecorator.Format = formatatt?.Format;
-            var separatoratt = FindAtt<MapsSeparatorAttribute>();
-            _typeDecorator.Separator = separatoratt?.Separator;
-            var defaultvalueatt = FindAtt<MapsUseNullValueAttribute>();
-            _typeDecorator.UserNullValue = defaultvalueatt?.Value;
+            var td = new TypeDecorator()
+            {
+                Format = FindAtt<MapsFormatAttribute>()?.Format,
+                Separator = FindAtt<MapsSeparatorAttribute>()?.Separator ?? ",",
+                UseNullValue = FindAtt<MapsUseNullValueAttribute>()?.Value,
+                UseConverter = FindAtt<MapsConversorAttribute>()?.Conversor
+            };
+            PropertyType = new PropertyType(PropertyProxy.PropertyType,td);
+        }
+
+        public bool Equals(Property? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return BaseAttributes.SequenceEqual(other.BaseAttributes) && PropertyProxy.Equals(other.PropertyProxy) && PropertyType.Equals(other.PropertyType);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Property) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            var hash = 0;
+            foreach (var baseAttribute in BaseAttributes)
+            {
+                hash = hash * 17 + baseAttribute.GetHashCode();
+            }
+            return HashCode.Combine(hash, PropertyProxy, PropertyType);
         }
     }
 }

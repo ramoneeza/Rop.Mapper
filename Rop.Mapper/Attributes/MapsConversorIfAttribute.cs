@@ -7,8 +7,8 @@
 public class MapsConversorIfAttribute : Attribute,IMapsIfAttribute
 {
     public string Conversor { get; }
-    public Type? Dst { get; }
-    public MapsConversorIfAttribute(string conversor, Type? dst)
+    public Type Dst { get; }
+    public MapsConversorIfAttribute(string conversor, Type dst)
     {
         Conversor = conversor;
         Dst = dst;

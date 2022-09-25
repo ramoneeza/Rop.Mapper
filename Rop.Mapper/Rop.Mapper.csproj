@@ -25,7 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Rop.TypeProxy" Version="1.0.4" />
+	  <PackageReference Include="Rop.TypeProxy" Version="1.0.5" />
 	</ItemGroup>
 
 

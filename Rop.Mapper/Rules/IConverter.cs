@@ -8,7 +8,7 @@ public interface IConverter
     Type BType { get; }
     string Name { get; }
     bool CanConvertNull { get; }
-    object? Convert(object? value,ITypeProxy typesrc,ITypeProxy typedst);
+    object? Convert(object? value,PropertyType typesrc,PropertyType typedst);
     public string TypeKey()
     {
         var key = TypeKey(AType,BType);

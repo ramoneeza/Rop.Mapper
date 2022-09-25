@@ -11,22 +11,12 @@ public class RuleStd : IRule
     internal Property PSrc { get; }
     internal Property PDst { get;}
     private string? Conversor { get; }
-
     private RuleStd(Property pSrc, Property pDst, string? conversor = null)
     {
         PSrc = pSrc;
         PDst = pDst;
-        if (conversor is null){
-            var converteratt = PSrc.FindAtt<MapsConversorAttribute>();
-            if (converteratt == null) converteratt = PDst.FindAtt<MapsConversorAttribute>();
-            Conversor = converteratt?.Conversor;
-        }
-        else
-        {
-            Conversor = conversor;
-        }
+        Conversor =IRule.GetConversor(PSrc,PDst,conversor);
     }
-
     public static IRule Factory(Property pSrc, Property pDst,string? conversor)
     {
         var rulestd = new RuleStd(pSrc, pDst,conversor);
@@ -35,12 +25,10 @@ public class RuleStd : IRule
         else
             return rulestd;
     }
-
     private bool HasErrorAttr()
     {
         return PSrc.HasAtt<MapsErrorAttribute>(out _) || PDst.HasAtt<MapsErrorAttribute>(out _);
     }
-
     public virtual void Apply(Mapper mapper, object src, object dst)
     {
         var value = PSrc.PropertyProxy.GetValue(src);
@@ -52,6 +40,6 @@ public class RuleStd : IRule
         var typesrc = PSrc.PropertyType;
         var typedst=PDst.PropertyType;
         var converter = (Conversor is not null) ? mapper.GetConverter(Conversor) : mapper.GetConverter(typesrc.Type,typedst.Type);
-        return ConversionEngine.ConvertValue(valuesrc, typesrc,PSrc.TypeDecorator, typedst,PDst.TypeDecorator, converter);
+        return ConversionEngine.ConvertValue(valuesrc, typesrc, typedst, converter);
     }
 }

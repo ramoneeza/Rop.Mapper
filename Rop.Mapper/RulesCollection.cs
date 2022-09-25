@@ -153,7 +153,7 @@ internal partial class RulesCollection
 
     private IRule? FactoryRuleDst(Property prop, Properties srcprops)
     {
-        if (prop.HasAtt<MapsFromUseMethodAttribute>(out var useatt) && useatt.Src == srcprops.ClassType)
+        if (prop.HasAtt<MapsFromUseMethodAttribute>(out var useatt) && useatt!.Src == srcprops.ClassType)
             return Rule.FactoryUseMethod(prop,DstType, useatt, srcprops);
         else
             return null;
@@ -171,7 +171,7 @@ internal partial class RulesCollection
         return error == "";
     }
 
-    public static RulesCollection? Factory(Type src, Type dst)
+    public static RulesCollection Factory(Type src, Type dst)
     {
         return new RulesCollection(src,dst);
     }

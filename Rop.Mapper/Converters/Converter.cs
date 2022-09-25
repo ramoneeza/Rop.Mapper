@@ -16,7 +16,7 @@ namespace Rop.Mapper.Converters
         public Type BType { get; }
         public virtual bool CanConvertNull => false;
         public virtual string Name { get; }
-        object? IConverter.Convert(object? value, ITypeProxy typesrc, ITypeProxy typedst)
+        object? IConverter.Convert(object? value,PropertyType typesrc,PropertyType typedst)
         {
             if (typesrc.Type != AType || typedst.Type != BType) throw new Exception("Bad Conversor");
             return Convert((A) value!);
@@ -32,7 +32,7 @@ namespace Rop.Mapper.Converters
     }
     public abstract class AbsSimetricConverter<A,B> :AbsConverter<A,B>,IConverterSymmetric<A,B>
     {
-        object? IConverter.Convert(object? value, ITypeProxy typesrc, ITypeProxy typedst)
+        object? IConverter.Convert(object? value, PropertyType typesrc, PropertyType typedst)
         {
             if (typesrc.Type==typeof(A)&&typedst.Type==typeof(B)) return Convert((A)value!);
             if (typesrc.Type == typeof(B) && typedst.Type == typeof(A)) return Convert((B)value!);
