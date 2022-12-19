@@ -136,6 +136,17 @@ namespace Rop.Mapper.Test
             var destiny = origin.MapTo<DestinyDateTime>();
             Assert.Equal(expected, destiny);
         }
+
+        [Fact]
+        public void TestDateTimeCVT()
+        {
+            var (origin, expected) = MakeClasses.MakeDateTimeCVT();
+            var destiny = origin.MapTo<DestinyDateTimeCVT>();
+            Assert.Equal(expected, destiny);
+        }
+
+
+
         [Fact]
         public void TestIgnoreGlobal()
         {

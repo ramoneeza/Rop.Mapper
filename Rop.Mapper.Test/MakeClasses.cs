@@ -359,6 +359,46 @@ namespace Rop.Mapper.Test
             
             return (origin, expected1);
         }
+        public static (OriginDateTimeCVT origin, DestinyDateTimeCVT expected) MakeDateTimeCVT()
+        {
+            var origin = new OriginDateTimeCVT()
+            {
+                Id = 3,
+                Name = "Pepe",
+                ModifyDate1 = new DateOnly(2022,1,4),
+                ModifyDate2= new DateOnly(2022, 1, 4),
+                ModifyTime1 = new TimeOnly(8,45,10),
+                ModifyTime2 = new TimeOnly(8, 45, 10),
+                UpdateDate1 = new DateTime(2022,3,4,23,22,1),
+                UpdateDate2 = new DateTime(2022, 3, 4, 23, 22, 1),
+                UpdateTime1 = new TimeSpan(9,23,2),
+                UpdateTime2 = new TimeSpan(9,23,2),
+                ModifyDate3 = null,
+                ModifyTime3 = null,
+                UpdateDate3 = null,
+                UpdateTime3 = null
+            };
+            var expected = new DestinyDateTimeCVT()
+            {
+                Id = 3,
+                Name = "Pepe",
+                ModifyDate1 = new DateTime(2022, 1, 4),
+                ModifyDate2 = new DateTime(2022, 1, 4),
+                ModifyTime1 = new TimeSpan(8, 45, 10),
+                ModifyTime2 = new TimeSpan(8, 45, 10),
+                UpdateDate1 = new DateOnly(2022, 3, 4),
+                UpdateDate2 = new DateOnly(2022, 3, 4),
+                UpdateTime1 = new TimeOnly(9, 23, 2),
+                UpdateTime2 = new TimeOnly(9, 23, 2),
+                ModifyDate3 = null,
+                ModifyTime3 = null,
+                UpdateDate3 = null,
+                UpdateTime3 = null
+            };
+
+
+            return (origin, expected);
+        }
         public static (OriginIgnoreGlobal origin, DestinyIgnore1Global expected1,DestinyIgnore2Global expected2) MakeIgnoreGlobal()
         {
             var origin = new OriginIgnoreGlobal()

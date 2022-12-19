@@ -21,7 +21,6 @@ namespace Rop.Mapper.Test.Model
         public DateOnly? ModifyDate { get; set; }
         [MapsTimeToIf("ModifyDate",typeof(DestinyDateTime))]
         public TimeOnly? ModifyTime { get; set; }
-
     }
     public record DestinyDateTime
     {
@@ -31,5 +30,47 @@ namespace Rop.Mapper.Test.Model
         public DateTime UpdateDate { get; init; }
         public DateTime ModifyDate { get; init; }
     }
+
+    public record OriginDateTimeCVT : IMappeable
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public DateTime UpdateDate1 { get; set; }
+        public TimeSpan UpdateTime1 { get; set; }
+        public DateOnly ModifyDate1 { get; set; }
+        public TimeOnly ModifyTime1 { get; set; }
+
+        public DateTime? UpdateDate2 { get; set; }
+        public TimeSpan? UpdateTime2 { get; set; }
+        public DateOnly? ModifyDate2 { get; set; }
+        public TimeOnly? ModifyTime2 { get; set; }
+
+        public DateTime? UpdateDate3 { get; set; }
+        public TimeSpan? UpdateTime3 { get; set; }
+        public DateOnly? ModifyDate3 { get; set; }
+        public TimeOnly? ModifyTime3 { get; set; }
+
+
+    }
+    public record DestinyDateTimeCVT : IMappeable
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public DateOnly UpdateDate1 { get; set; }
+        public TimeOnly UpdateTime1 { get; set; }
+        public DateTime ModifyDate1 { get; set; }
+        public TimeSpan ModifyTime1 { get; set; }
+
+        public DateOnly? UpdateDate2 { get; set; }
+        public TimeOnly? UpdateTime2 { get; set; }
+        public DateTime? ModifyDate2 { get; set; }
+        public TimeSpan? ModifyTime2 { get; set; }
+
+        public DateOnly? UpdateDate3 { get; set; }
+        public TimeOnly? UpdateTime3 { get; set; }
+        public DateTime? ModifyDate3 { get; set; }
+        public TimeSpan? ModifyTime3 { get; set; }
+    }
+
 
 }

@@ -14,7 +14,12 @@ public interface IConverter
         var key = TypeKey(AType,BType);
         return key;
     }
-    public static string TypeKey(Type a,Type b)=>$"{a.Name}|{b.Name}";
+    public static string TypeKey(Type a,Type b)
+    {
+        var ta =TypeProxy.Get(a);
+        var tb=TypeProxy.Get(b);
+        return $"{ta.FriendlyName}|{tb.FriendlyName}";
+    }
 }
 
 public interface IConverter<A, B>:IConverter
@@ -26,7 +31,9 @@ public interface IConverterSymmetric : IConverter
 {
     public string InvTypeKey()
     {
-        var key = $"{BType.Name}|{AType.Name}";
+        var ta = TypeProxy.Get(AType);
+        var tb = TypeProxy.Get(BType);
+        var key = $"{tb.FriendlyName}|{ta.FriendlyName}";
         return key;
     }
 }

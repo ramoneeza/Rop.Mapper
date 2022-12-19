@@ -40,8 +40,11 @@ public static class DefaultMapper
     {
         DefaultConvertersDic = new ConcurrentDictionary<string, IConverter>(StringComparer.OrdinalIgnoreCase);
         AddDefaultConverter<DateOnlyConverter>();
+        AddDefaultConverter<DateOnlyConverter2>();
         AddDefaultConverter<TimeOnlyConverter>();
+        AddDefaultConverter<TimeOnlyConverter2>();
         AddDefaultConverter<DateTimeToTimeConverter>();
+        AddDefaultConverter<DateTimeToTimeConverter2>();
         AddDefaultConverter<BitArrayConverter>();
         _defaultmapper = new Mapper();
     }
