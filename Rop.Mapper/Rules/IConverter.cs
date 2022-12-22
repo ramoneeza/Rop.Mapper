@@ -9,17 +9,7 @@ public interface IConverter
     string Name { get; }
     bool CanConvertNull { get; }
     object? Convert(object? value,PropertyType typesrc,PropertyType typedst);
-    public string TypeKey()
-    {
-        var key = TypeKey(AType,BType);
-        return key;
-    }
-    public static string TypeKey(Type a,Type b)
-    {
-        var ta =TypeProxy.Get(a);
-        var tb=TypeProxy.Get(b);
-        return $"{ta.FriendlyName}|{tb.FriendlyName}";
-    }
+    public (RuntimeTypeHandle,RuntimeTypeHandle) TypeKey()=>(AType.TypeHandle,BType.TypeHandle);
 }
 
 public interface IConverter<A, B>:IConverter
@@ -29,13 +19,7 @@ public interface IConverter<A, B>:IConverter
 
 public interface IConverterSymmetric : IConverter
 {
-    public string InvTypeKey()
-    {
-        var ta = TypeProxy.Get(AType);
-        var tb = TypeProxy.Get(BType);
-        var key = $"{tb.FriendlyName}|{ta.FriendlyName}";
-        return key;
-    }
+    public (RuntimeTypeHandle,RuntimeTypeHandle) InvTypeKey()=>(BType.TypeHandle,AType.TypeHandle);
 }
 public interface IConverterSymmetric<A,B>:IConverter<A,B>,IConverterSymmetric
 {

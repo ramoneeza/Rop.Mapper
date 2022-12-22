@@ -6,7 +6,7 @@ namespace Rop.Mapper;
 
 public static class DefaultMapper
 {
-    internal static readonly ConcurrentDictionary<string, IConverter> DefaultConvertersDic;
+    internal static readonly ConverterDictionary DefaultConvertersDic;
     private static readonly Mapper _defaultmapper;
     public static Dst MapTo<Dst>(this IMappeable item) where Dst : class, new() => _defaultmapper.Map<Dst>(item);
     public static void MapTo<Dst>(this IMappeable item, Dst destiny) where Dst : class => _defaultmapper.Map(item, destiny);
@@ -26,19 +26,16 @@ public static class DefaultMapper
 
     private static void AddDefaultConverter<C>() where C : IConverter,new()
     {
-        var converter = new C();
-        DefaultConvertersDic[converter.TypeKey()] = converter;
-        if (converter is IConverterSymmetric cs) DefaultConvertersDic[cs.InvTypeKey()] = converter;
+        DefaultConvertersDic.RegisterConverterByType<C>();
     }
     private static void AddDefaultConverterByName<C>() where C : IConverter,new()
     {
-        var converter = new C();
-        DefaultConvertersDic[converter.Name] = converter;
+        DefaultConvertersDic.RegisterConverterByName<C>();
     }
 
     static DefaultMapper()
     {
-        DefaultConvertersDic = new ConcurrentDictionary<string, IConverter>(StringComparer.OrdinalIgnoreCase);
+        DefaultConvertersDic = new ConverterDictionary();
         AddDefaultConverter<DateOnlyConverter>();
         AddDefaultConverter<DateOnlyConverter2>();
         AddDefaultConverter<TimeOnlyConverter>();

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
+using Rop.Mapper.Converters;
 using Rop.Mapper.Rules;
 
 namespace Rop.Mapper
@@ -14,7 +15,7 @@ namespace Rop.Mapper
         private static readonly ConcurrentDictionary<(RuntimeTypeHandle src, RuntimeTypeHandle dsc), RulesCollection> _rulesdic = new();
         private static readonly ConcurrentDictionary<RuntimeTypeHandle, Properties> _propertiessrc = new();
         private static readonly ConcurrentDictionary<RuntimeTypeHandle, Properties> _propertiesdst = new();
-        private readonly ConcurrentDictionary<string, IConverter> _convertersdic;
+        private readonly ConverterDictionary _convertersdic;
         public Dst Map<Dst>(object item) where Dst:class,new()
         {
             var destiny = new Dst();
@@ -81,53 +82,25 @@ namespace Rop.Mapper
             return new(properties);
         }
 
-        public IConverter? GetConverter(string convertername)
-        {
-            _convertersdic.TryGetValue(convertername, out var value);
-            return value;
-        }
+        public IConverter? GetConverter(string convertername)=>_convertersdic[convertername];
         public IConverter? GetConverter(Type src,Type dst)
         {
             if (src == dst) return null;
-            var key =IConverter.TypeKey(src,dst);
-            return GetConverter(key);
+            return _convertersdic[(src.TypeHandle, dst.TypeHandle)];
         }
 
         public void RegisterConverterByName<C>(bool alsobytype = false, bool force = false) where C : IConverter, new()
         {
-            var converter = new C();
-            RegisterConverter(converter.Name,converter,force);
-            if (alsobytype)
-            {
-                RegisterConverter(converter.TypeKey(), converter, force);
-                if (converter is IConverterSymmetric cs)
-                {
-                    RegisterConverter(cs.InvTypeKey(), converter, force);
-                }
-            }
+            _convertersdic.RegisterConverterByName<C>(alsobytype,force);
         }
-
         public void RegisterConverterByType<C>(bool alsobyname = false, bool force = false) where C : IConverter, new()
         {
-            var converter = new C();
-            RegisterConverter(converter.TypeKey(), converter, force);
-            if (converter is IConverterSymmetric cs)
-            {
-                RegisterConverter(cs.InvTypeKey(), converter, force);
-            }
-            if (alsobyname)
-                RegisterConverter(converter.Name,converter,force);
+            _convertersdic.RegisterConverterByType<C>(alsobyname,force);
         }
-        private void RegisterConverter(string name,IConverter converter, bool force = false)
-        {
-            if (_convertersdic.ContainsKey(name) && !force) return;
-            _convertersdic[name] = converter;
-        }
-
+        
         public Mapper()
         {
-            _convertersdic = new ConcurrentDictionary<string, IConverter>(DefaultMapper.DefaultConvertersDic,
-                StringComparer.OrdinalIgnoreCase);
+            _convertersdic = new (DefaultMapper.DefaultConvertersDic);
         }
 
         public static bool Verify(Type src, Type dst,out string error)
