@@ -1,6 +1,6 @@
 ﻿namespace Rop.Mapper.Attributes;
 /// <summary>
-/// Maps to other name when destiny
+/// Maps to other 'name' property when destiny is 'dst'. Optional conversor is possible.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public class MapsToIfAttribute : Attribute,IMapsIfAttribute

@@ -3,7 +3,9 @@ using System.Security.Cryptography;
 using Rop.Mapper.Rules;
 
 namespace Rop.Mapper;
-
+/// <summary>
+/// When use with Dependency Injection and Custom converters, this is the mapper service.
+/// </summary>
 public interface IMapper
 {
     Dst Map<Dst>(object item) where Dst:class,new();

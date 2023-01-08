@@ -10,6 +10,9 @@ using Rop.Mapper.Rules;
 
 namespace Rop.Mapper
 {
+    /// <summary>
+    /// Implementation of IMapper. For DI Service o under DefaultMapper.
+    /// </summary>
     public class Mapper : IMapper
     {
         private static readonly ConcurrentDictionary<(RuntimeTypeHandle src, RuntimeTypeHandle dsc), RulesCollection> _rulesdic = new();

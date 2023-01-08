@@ -1,7 +1,7 @@
 ﻿namespace Rop.Mapper.Attributes;
 
 /// <summary>
-/// Maps to other name when destiny
+/// When use in a time property, use 'name' property as destiny
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple =false)]
 public class MapsTimeToAttribute : Attribute,IMapsAttribute

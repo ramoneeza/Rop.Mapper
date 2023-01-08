@@ -1,5 +1,7 @@
 ﻿namespace Rop.Mapper.Attributes;
-
+/// <summary>
+/// When use in a class mapping to 'dst'. This properties are ignored.
+/// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public class MapsIgnoreSomeIfAttribute : Attribute, IMapsIfAttribute
 {

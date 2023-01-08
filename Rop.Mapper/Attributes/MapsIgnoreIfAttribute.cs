@@ -1,6 +1,6 @@
 ﻿namespace Rop.Mapper.Attributes;
 /// <summary>
-/// Ignore this attribute if destiny is...
+/// Ignore this attribute if destiny is 'dst'
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public class MapsIgnoreIfAttribute : Attribute,IMapsIfAttribute

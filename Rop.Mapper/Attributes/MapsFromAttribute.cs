@@ -1,6 +1,6 @@
 ﻿namespace Rop.Mapper.Attributes;
 /// <summary>
-/// When Destiny. Name of the other Property to map.
+/// When declared in Destiny Class. Name of the Property of origin to map.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 public class MapsFromAttribute : Attribute,IMapsAttribute

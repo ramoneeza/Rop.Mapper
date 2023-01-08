@@ -1,5 +1,8 @@
 ﻿namespace Rop.Mapper.Attributes;
-
+/// <summary>
+/// When use in destiny class. Property from source to use when origin is 'src'.
+/// Optional conversor is allowed.
+/// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public class MapsFromIfAttribute : Attribute,IMapsFromAttribute
 {

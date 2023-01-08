@@ -2,7 +2,7 @@
 {
 
     /// <summary>
-    /// This property maps to another with other name
+    /// This property maps to another property with other name
     /// </summary>
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]

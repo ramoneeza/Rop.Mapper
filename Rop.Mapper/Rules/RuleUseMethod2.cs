@@ -5,7 +5,9 @@ using Rop.Mapper.Attributes;
 using Rop.Types;
 
 namespace Rop.Mapper.Rules;
-
+/// <summary>
+/// Alternate Rule Use Method
+/// </summary>
 public class RuleUseMethod2 : IRule
 {
     public int Priority => 2;

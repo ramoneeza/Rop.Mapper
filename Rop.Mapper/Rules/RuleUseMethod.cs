@@ -4,7 +4,9 @@ using Rop.Mapper.Attributes;
 using Rop.Types;
 
 namespace Rop.Mapper.Rules;
-
+/// <summary>
+/// Partial mapping rule about UseMethod instead direct mapping
+/// </summary>
 public class RuleUseMethod : IRule
 {
     public int Priority => 2;

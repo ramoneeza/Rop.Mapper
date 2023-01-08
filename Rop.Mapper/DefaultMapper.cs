@@ -3,7 +3,10 @@ using Rop.Mapper.Converters;
 using Rop.Mapper.Rules;
 
 namespace Rop.Mapper;
-
+/// <summary>
+/// Default Mapper.
+/// Used primary whith classes marked as IMappeable
+/// </summary>
 public static class DefaultMapper
 {
     internal static readonly ConverterDictionary DefaultConvertersDic;

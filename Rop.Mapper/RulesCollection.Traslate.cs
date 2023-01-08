@@ -8,6 +8,10 @@ using Rop.Types;
 
 namespace Rop.Mapper
 {
+    /// <summary>
+    /// Some complex rules are traslation of simple ones when Src and Dst are known
+    /// Usualy for If and From attributes to normal ones
+    /// </summary>
     internal partial class RulesCollection
     {
         private void TraslateIf(Properties srcprop, Properties dstprop)

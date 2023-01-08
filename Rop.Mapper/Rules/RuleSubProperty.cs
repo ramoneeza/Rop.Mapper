@@ -3,6 +3,9 @@ using Rop.Types;
 
 namespace Rop.Mapper.Rules;
 
+/// <summary>
+/// Mapping over sub property (Property of destiny property)
+/// </summary>
 public class RuleSubProperty : IRule
 {
     public int Priority => 1;

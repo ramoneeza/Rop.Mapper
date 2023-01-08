@@ -4,6 +4,9 @@ using Rop.Types;
 
 namespace Rop.Mapper.Rules;
 
+/// <summary>
+/// Partial rule conversion for Date types
+/// </summary>
 public class RuleDate : IRule
 {
     public int Priority => 1;

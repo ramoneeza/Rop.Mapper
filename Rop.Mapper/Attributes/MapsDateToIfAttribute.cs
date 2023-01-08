@@ -1,7 +1,7 @@
 ﻿namespace Rop.Mapper.Attributes;
 
 /// <summary>
-/// Maps to other name when destiny
+/// Maps a date property to 'name' proerty when destiny type is 'dst'
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public class MapsDateToIfAttribute : Attribute,IMapsIfAttribute

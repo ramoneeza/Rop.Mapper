@@ -3,6 +3,9 @@ using Rop.Types;
 
 namespace Rop.Mapper.Rules;
 
+/// <summary>
+/// Mapping Partial Rule about a Time property
+/// </summary>
 public class RuleTime : IRule
 {
     public int Priority => 2;

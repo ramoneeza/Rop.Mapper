@@ -1,7 +1,7 @@
 ﻿namespace Rop.Mapper.Attributes;
 
 /// <summary>
-/// When String. Format to use
+/// When the destiny property is a string. Format to use when destiny is 'dst'
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public class MapsFormatIfAttribute : Attribute,IMapsIfAttribute

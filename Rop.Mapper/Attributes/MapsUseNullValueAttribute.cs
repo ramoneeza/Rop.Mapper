@@ -1,6 +1,6 @@
 ﻿namespace Rop.Mapper.Attributes;
 /// <summary>
-/// Default value when is Null
+/// Default value to use when Null is going to be mapped.
 /// </summary>
 public class MapsUseNullValueAttribute : Attribute,IMapsAttribute
 {

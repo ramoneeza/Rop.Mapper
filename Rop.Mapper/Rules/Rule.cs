@@ -9,6 +9,9 @@ using Rop.Types;
 
 namespace Rop.Mapper.Rules
 {
+    /// <summary>
+    /// Main Rules factory class
+    /// </summary>
     public static class Rule
     {
         internal static RuleError Error(string error) => new RuleError(error);

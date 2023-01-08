@@ -2,7 +2,9 @@
 using Rop.Types;
 
 namespace Rop.Mapper.Rules;
-
+/// <summary>
+/// Partial Rule conversion about Flating properties
+/// </summary>
 public class RuleFlat : IRule
 {
     public int Priority => 1;

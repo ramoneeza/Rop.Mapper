@@ -11,6 +11,10 @@ using Rop.Mapper.Rules;
 
 namespace Rop.Mapper
 {
+    /// <summary>
+    /// Property attibute under a Rule Collection.
+    /// Attibutes are adapted to Src and Dst rules and are not original Attributes
+    /// </summary>
     public class Property:IEquatable<Property>
     {
         private readonly List<IMapsAttribute> BaseAttributes;
@@ -73,14 +77,15 @@ namespace Rop.Mapper
         internal void AdjustType()
         {
             var formatatt = FindAtt<MapsFormatAttribute>();
-            var td = new TypeDecorator()
+            var td = new PropertyType()
             {
-                Format = FindAtt<MapsFormatAttribute>()?.Format,
-                Separator = FindAtt<MapsSeparatorAttribute>()?.Separator ?? ",",
-                UseNullValue = FindAtt<MapsUseNullValueAttribute>()?.Value,
-                UseConverter = FindAtt<MapsConversorAttribute>()?.Conversor
+                TypeProxy = PropertyProxy.PropertyType,
+                DecoFormat = FindAtt<MapsFormatAttribute>()?.Format,
+                DecoSeparator = FindAtt<MapsSeparatorAttribute>()?.Separator ?? ",",
+                DecoUseNullValue = FindAtt<MapsUseNullValueAttribute>()?.Value,
+                DecoUseConverter = FindAtt<MapsConversorAttribute>()?.Conversor
             };
-            PropertyType = new PropertyType(PropertyProxy.PropertyType,td);
+            PropertyType = td;
         }
 
         public bool Equals(Property? other)

@@ -2,19 +2,17 @@
 
 namespace Rop.Mapper;
 
-public record PropertyType
+public record PropertyType:IPropertyDecorator
 {
     public Type Type => TypeProxy.Type;
     public ITypeProxy TypeProxy { get; init; }
-    public TypeDecorator TypeDecorator { get; init; }
-    public PropertyType(ITypeProxy typeProxy, TypeDecorator typeDecorator)
-    {
-        TypeProxy = typeProxy;
-        TypeDecorator = typeDecorator;
-    }
+    public string? DecoFormat { get; init; }
+    public string? DecoSeparator { get; init; }
+    public object? DecoUseNullValue { get; init; }
+    public string? DecoUseConverter { get; init; }
 
     public object? GetDefaultValue()
     {
-        return TypeDecorator.UseNullValue ?? (TypeProxy.GetDefaultValue() ?? TypeProxy.Type.GetDefaultValue());
+        return DecoUseNullValue ?? (TypeProxy.GetDefaultValue() ?? TypeProxy.Type.GetDefaultValue());
     }
 }

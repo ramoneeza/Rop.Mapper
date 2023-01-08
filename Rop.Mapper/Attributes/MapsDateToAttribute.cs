@@ -1,7 +1,7 @@
 ﻿namespace Rop.Mapper.Attributes;
 
 /// <summary>
-/// Maps to other name when destiny
+/// Maps a Date Property to 'name' property
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 public class MapsDateToAttribute : Attribute,IMapsAttribute

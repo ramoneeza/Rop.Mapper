@@ -3,7 +3,9 @@ using System.Reflection;
 namespace Rop.Mapper;
 
 
-
+/// <summary>
+/// Properties for a Class
+/// </summary>
 internal class Properties
 {
     public Type ClassType { get; }

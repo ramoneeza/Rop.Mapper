@@ -1,7 +1,7 @@
 ﻿namespace Rop.Mapper.Attributes;
 
 /// <summary>
-/// This property maps to another with other name
+/// This property maps ALSO to another with other name. Optional conversor is possible.
 /// </summary>
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]

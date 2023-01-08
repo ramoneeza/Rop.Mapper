@@ -5,6 +5,9 @@ using Rop.Types;
 
 namespace Rop.Mapper.Rules;
 
+/// <summary>
+/// Standard Rule Conversion between properties
+/// </summary>
 public class RuleStd : IRule
 {
     public int Priority => 1;

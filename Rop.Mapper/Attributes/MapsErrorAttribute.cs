@@ -7,6 +7,9 @@ using Rop.Types;
 
 namespace Rop.Mapper.Attributes
 {
+    /// <summary>
+    /// This attribute marks a Property as having an Erroneous Mapping
+    /// </summary>
     public class MapsErrorAttribute:Attribute,IMapsAttribute
     {
         public Attribute AttributeOrigin { get; }

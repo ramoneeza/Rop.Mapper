@@ -1,6 +1,6 @@
 ﻿namespace Rop.Mapper.Attributes;
 /// <summary>
-/// When Destiny. Conversor to use when maps from source
+/// When used in Destiny Class. Conversor to use when maps from source of type 'dst'
 /// </summary>
 public class MapsFromConversorAttribute : Attribute,IMapsFromAttribute
 {

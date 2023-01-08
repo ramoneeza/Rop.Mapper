@@ -82,7 +82,7 @@ namespace Rop.Mapper
 
         private static string ConvertValueToString(object valuesrc, PropertyType origin,PropertyType destiny)
         {
-            var format =destiny.TypeDecorator.Format;
+            var format =destiny.DecoFormat;
             // Primitive value
             if (origin.TypeProxy.TypeCode != TypeCode.Object)
             {
@@ -91,7 +91,7 @@ namespace Rop.Mapper
             // Array or List
             if (origin.TypeProxy.IsArray || origin.TypeProxy.IsList)
             {
-                var separator = destiny.TypeDecorator.Separator;
+                var separator = destiny.DecoSeparator;
                 if (valuesrc is not IEnumerable valuesrcenumerable)
                     throw new InvalidCastException("Can't convert to IEnumerable");
                 var list = valuesrcenumerable.Cast<object>().Select(o => ConvertSimpleValueToString(o, format))
@@ -133,18 +133,18 @@ namespace Rop.Mapper
 
         private static object ConvertStringToEnumerable(string valuesrc,PropertyType origin,PropertyType destiny)
         {
-            var separator = origin.TypeDecorator.Separator?.FirstOrDefault()??',';
-            var format = destiny.TypeDecorator.Format;
+            var separator = origin.DecoSeparator?.FirstOrDefault()??',';
+            var format = destiny.DecoFormat;
             var ve = valuesrc.Split(separator);
             if (destiny.TypeProxy.BaseType!.Type != typeof(string))
             {
                 var vei = ve.Select(s => Convert.ChangeType(s, destiny.TypeProxy.BaseType!.Type)).ToList();
-                var neworigin =new PropertyType(TypeProxy.Get(vei.GetType(), false),origin.TypeDecorator);
+                var neworigin =origin with {TypeProxy = TypeProxy.Get(vei.GetType(), false)};
                 return ConvertEnumerableToEnumerable(vei, neworigin, destiny);
             }
             else
             {
-                var neworigin = new PropertyType(TypeProxy.Get(ve.GetType(), false),origin.TypeDecorator);
+                var neworigin = origin with { TypeProxy = TypeProxy.Get(ve.GetType(), false) };
                 return ConvertEnumerableToEnumerable(ve, neworigin, destiny);
             }
         }

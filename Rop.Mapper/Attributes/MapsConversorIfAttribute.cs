@@ -1,7 +1,7 @@
 ﻿namespace Rop.Mapper.Attributes;
 
 /// <summary>
-/// Use Conversor when maps to destiny
+/// Conversor to use when maps to certain property destiny
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public class MapsConversorIfAttribute : Attribute,IMapsIfAttribute

@@ -1,5 +1,8 @@
 ﻿namespace Rop.Mapper.Rules;
 
+/// <summary>
+/// Partial rule property conversion detected and marked as an Error.
+/// </summary>
 public class RuleError : IRule
 {
     public int Priority => 0;

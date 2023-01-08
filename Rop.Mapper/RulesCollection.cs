@@ -8,7 +8,9 @@ using Rop.Types;
 
 
 namespace Rop.Mapper;
-
+/// <summary>
+/// A Mapping is as collection of partial rules
+/// </summary>
 internal partial class RulesCollection
 {
     public Type SrcType { get; }
